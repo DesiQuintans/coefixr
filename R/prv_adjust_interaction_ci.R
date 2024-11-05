@@ -12,12 +12,12 @@
 #' are the lower and upper 95% confidence interval, respectively. The names in
 #' each vector are the names of the terms from the model.
 #' @md
-#'
+#
 adjust_interaction_ci <- function(modelobj, data = NULL) {
     # 1. Get model's adjusted estimates and SEs.
     model_se   <- adjust_interaction_se(modelobj)
-    model_coef <- adjust_interaction_coef(modelobj, data = NULL)
-    ref_levels <- build_missing_terms(modelobj, data = NULL)$reference_levels
+    model_coef <- adjust_interaction_coef(modelobj, data = data)
+    ref_levels <- build_missing_terms(modelobj, data = data)$reference_levels
 
     # SEs are only calculabled for terms in the original model, i.e. terms
     # involving reference levels won't have SEs.
