@@ -61,9 +61,10 @@ adjust_interaction_coef <- function(modelobj, data = NULL) {
                 coef_list <- suppressWarnings(as.numeric(coef_list))
 
                 # If every coefficient is missing, then this is the interaction
-                # of reference levels, and the coefficient should be set to 1.00.
+                # of reference levels, and the coefficient should be set to 0.00
+                # (since this is not exponentiated yet).
                 if (all(is.na(coef_list))) {
-                    return(1.00)
+                    return(0.00)
                 } else {
                     return(sum(coef_list, na.rm = TRUE))
                 }
