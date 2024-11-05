@@ -37,8 +37,8 @@ build_missing_terms <- function(modelobj, data = NULL) {
     # 1. Get the names of all variables involved in each interaction. Interactions
     # have ":" in the column name, and covariates used in the interaction are
     # flagged with `1`.
-    all_intx <- as.data.frame(attr(stats::terms(modelobj), "factors"))
-    all_intx <- subset(all_intx, select = grep(":", colnames(all_intx)))
+    all_vars <- as.data.frame(attr(stats::terms(modelobj), "factors"))
+    all_intx <- subset(all_vars, select = grep(":", colnames(all_vars)))
     all_intx <- apply(all_intx, 2, function(y) { names(y)[which(y == 1)] }, simplify = FALSE)
 
 
@@ -103,19 +103,18 @@ build_missing_terms <- function(modelobj, data = NULL) {
     missing_terms <- unlist(constructed_terms, use.names = FALSE)
     missing_terms <- missing_terms[!(missing_terms %in% original_terms)]
 
-    filled_terms <- sort(unique(c(original_terms, missing_terms)))
-    sorted_filled_terms <- filled_terms[order(grepl(":", filled_terms, fixed = TRUE), filled_terms)]
+    filled_terms <- unique(c(original_terms, missing_terms))
+    sorted_filled_terms <- filled_terms[order(grepl(":", filled_terms, fixed = TRUE))]
 
-    with_singletons <- sort(unique(c(unlist(custom_xlevels, use.names = FALSE), original_terms, missing_terms)))
-    sorted_singletons <- with_singletons[order(grepl(":", with_singletons, fixed = TRUE), with_singletons)]
-
-    references <- custom_xlevels
+    with_singletons <- unique(c(unlist(custom_xlevels, use.names = FALSE), original_terms, missing_terms))
+    sorted_singletons <- with_singletons[order(grepl(":", with_singletons, fixed = TRUE))]
 
     list(
         original_terms   = original_terms,
-        missing_terms    = sort(missing_terms),
+        missing_terms    = missing_terms,
         filled_terms     = sorted_filled_terms,
         with_singletons  = sorted_singletons,
-        reference_levels = reference_levels
+        reference_levels = reference_levels,
+        custom_xlevels   = custom_xlevels
     )
 }
