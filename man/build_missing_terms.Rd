@@ -4,7 +4,7 @@
 \alias{build_missing_terms}
 \title{Build all of the missing terms in a model}
 \usage{
-build_missing_terms(modelobj, data = NULL)
+build_missing_terms(modelobj, data)
 }
 \arguments{
 \item{modelobj}{(Object) A model object.}

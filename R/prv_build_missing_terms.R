@@ -16,17 +16,14 @@
 #'     - `reference_levels` is the reference level of each Factor used in the model.
 #' @md
 #'
-build_missing_terms <- function(modelobj, data = NULL) {
+build_missing_terms <- function(modelobj, data) {
     # 0. I need to get the levels of factor variables from the original dataset.
     # Normally, models include this in a $xlevels item, but coxme does not, and
     # I bet other model objects may not either.
-    if (is.null(data)) {
-        stopifnot(
-            "`$call$data` is not included in the model object, so it should be included in the `data =` argument." =
-                !is.null(modelobj$call$data)
-        )
-        data <- eval(modelobj$call$data)
-    }
+    stopifnot(
+        "The dataframe used to fit the model should be included in the `data =` argument." =
+            !is.null(data)
+    )
 
     all_levels <- Map(levels, eval(modelobj$call$data))
     all_independent_vars <- unique(unlist(strsplit(attr(modelobj$terms, "term.labels"), ":")))

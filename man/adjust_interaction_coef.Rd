@@ -4,13 +4,12 @@
 \alias{adjust_interaction_coef}
 \title{Adjust an interaction term's coefficients}
 \usage{
-adjust_interaction_coef(modelobj, data = NULL)
+adjust_interaction_coef(modelobj, data)
 }
 \arguments{
 \item{modelobj}{(Object) A model object.}
 
-\item{data}{(Dataframe) The data used to fit the model. If \code{NULL} (default), tries to
-detect what was used in \code{modelobj}.}
+\item{data}{(Dataframe) The data used to fit the model.}
 }
 \value{
 A Numeric vector, where the names are all of the terms from the

@@ -4,16 +4,15 @@
 #' Simply uses the adjusted coefficients and SEs to recalculate the 95%
 #' confidence interval.
 #'
-#' @param modelobj The model to adjust.
-#' @param data The data used to fit the model. If `NULL` (default), tries to
-#'     detect what was used in `modelobj`.
+#' @param modelobj (Object) A model object.
+#' @param data (Dataframe) The data used to fit the model.
 #'
 #' @return A named List. `$lwr` and `$upr` contain named Numeric vectors that
 #' are the lower and upper 95% confidence interval, respectively. The names in
 #' each vector are the names of the terms from the model.
 #' @md
 #
-adjust_interaction_ci <- function(modelobj, data = NULL) {
+adjust_interaction_ci <- function(modelobj, data) {
     # 1. Get model's adjusted estimates and SEs.
     model_se   <- adjust_interaction_se(modelobj)
     model_coef <- adjust_interaction_coef(modelobj, data = data)

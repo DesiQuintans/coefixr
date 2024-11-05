@@ -4,13 +4,12 @@
 \alias{adjust_interaction_model}
 \title{Return an adjusted \code{summary()} table for an interaction model}
 \usage{
-adjust_interaction_model(modelobj, data = NULL, exponentiate = FALSE)
+adjust_interaction_model(modelobj, data, exponentiate = FALSE)
 }
 \arguments{
-\item{modelobj}{(Object) The model to adjust.}
+\item{modelobj}{(Object) A model object.}
 
-\item{data}{(Dataframe) The data used to fit the model. If \code{NULL} (default), tries to
-detect what was used in \code{modelobj}.}
+\item{data}{(Dataframe) The data used to fit the model.}
 
 \item{exponentiate}{(Logical) If \code{TRUE}, exponentiates the coefficient and confidence interval.}
 }

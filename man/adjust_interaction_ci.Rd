@@ -4,13 +4,12 @@
 \alias{adjust_interaction_ci}
 \title{Adjust an interaction term's confidence interval (CI)}
 \usage{
-adjust_interaction_ci(modelobj, data = NULL)
+adjust_interaction_ci(modelobj, data)
 }
 \arguments{
-\item{modelobj}{The model to adjust.}
+\item{modelobj}{(Object) A model object.}
 
-\item{data}{The data used to fit the model. If \code{NULL} (default), tries to
-detect what was used in \code{modelobj}.}
+\item{data}{(Dataframe) The data used to fit the model.}
 }
 \value{
 A named List. \verb{$lwr} and \verb{$upr} contain named Numeric vectors that

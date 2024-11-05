@@ -3,9 +3,8 @@
 #'
 #' Adjusts the coefficients and CIs of any interaction terms in the model.
 #'
-#' @param modelobj (Object) The model to adjust.
-#' @param data (Dataframe) The data used to fit the model. If `NULL` (default), tries to
-#'     detect what was used in `modelobj`.
+#' @param modelobj (Object) A model object.
+#' @param data (Dataframe) The data used to fit the model.
 #' @param exponentiate (Logical) If `TRUE`, exponentiates the coefficient and confidence interval.
 #'
 #' @return A data frame.
@@ -18,7 +17,7 @@
 #' summary(my_model)
 #' adjust_interaction_model(my_model, cancer_modified, exponentiate = TRUE)
 #'
-adjust_interaction_model <- function(modelobj, data = NULL, exponentiate = FALSE) {
+adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
     # 0. Set up the sources of information.
 
     model_smry <- NULL

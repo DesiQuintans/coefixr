@@ -7,14 +7,13 @@
 #' be adjusted as "SexMale:EducationPrimary + SexMale + EducationPrimary".
 #'
 #' @param modelobj (Object) A model object.
-#' @param data (Dataframe) The data used to fit the model. If `NULL` (default), tries to
-#'     detect what was used in `modelobj`.
+#' @param data (Dataframe) The data used to fit the model.
 #'
 #' @return A Numeric vector, where the names are all of the terms from the
 #'     model, and the values are the adjusted coefficients.
 #' @md
 #'
-adjust_interaction_coef <- function(modelobj, data = NULL) {
+adjust_interaction_coef <- function(modelobj, data) {
     # 1. Get the names of the effects and the estimates of each.
     mdl_terms <- names(stats::coef(modelobj))
     mdl_coefs <- stats::coef(modelobj)
