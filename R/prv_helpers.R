@@ -6,6 +6,8 @@
 #' @param name  (Character) The name of the column that will hold the names of `vec`.
 #'
 #' @return A data frame.
+#' @md
+#' @keywords internal
 #'
 named_to_df <- function(vec, value = "value", name = "covar") {
     if(is.null(names(vec))) {

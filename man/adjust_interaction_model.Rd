@@ -23,7 +23,7 @@ Adjusts the coefficients and CIs of any interaction terms in the model.
 # cancer_modified is a built-in dataset provided with the `coefixr` package.
 my_model <- lm(status ~ age + sex * ph.ecog + sex * wt.loss, data = cancer_modified)
 
-summary(my_model)
+rownames(summary(my_model)$coefficients)
 adjust_interaction_model(my_model, cancer_modified, exponentiate = TRUE)
 
 }

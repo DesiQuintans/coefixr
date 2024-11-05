@@ -11,6 +11,7 @@
 #' @return A named Numeric vector, where the names are all of the terms from the
 #'     model, and the values are the adjusted SEs.
 #' @md
+#' @keywords internal
 #'
 adjust_interaction_se <- function(modelobj) {
     # 1. Get the names of the effects and the variance-covariance table.

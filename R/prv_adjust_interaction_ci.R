@@ -11,6 +11,7 @@
 #' are the lower and upper 95% confidence interval, respectively. The names in
 #' each vector are the names of the terms from the model.
 #' @md
+#' @keywords internal
 #
 adjust_interaction_ci <- function(modelobj, data) {
     # 1. Get model's adjusted estimates and SEs.

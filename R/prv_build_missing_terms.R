@@ -15,6 +15,7 @@
 #'     - `with_singletons` also includes the reference terms outside interactions.
 #'     - `reference_levels` is the reference level of each Factor used in the model.
 #' @md
+#' @keywords internal
 #'
 build_missing_terms <- function(modelobj, data) {
     # 0. I need to get the levels of factor variables from the original dataset.
@@ -25,7 +26,7 @@ build_missing_terms <- function(modelobj, data) {
             !is.null(data)
     )
 
-    all_levels <- Map(levels, eval(modelobj$call$data))
+    all_levels <- Map(levels, data)
     all_independent_vars <- unique(unlist(strsplit(attr(modelobj$terms, "term.labels"), ":")))
 
     relevant_levels <- all_levels[names(all_levels) %in% all_independent_vars]
@@ -41,6 +42,11 @@ build_missing_terms <- function(modelobj, data) {
 
     # 2. Form the model term names. For Factors, it's the variable name and factor
     # label mashed together. For everything else, it's the variable name by itself.
+
+    # Which of the non-interaction terms are Factors?
+    factor_vars <-
+        !sapply(relevant_levels, is.null)
+
     custom_xlevels <-
         Map(
             function(varname) {
@@ -56,7 +62,9 @@ build_missing_terms <- function(modelobj, data) {
                 }
             },
 
-            unique(c(unlist(all_intx), names(relevant_levels)))
+            # TAIL: Doing colnames(all_vars) here gives me the
+            colnames(all_vars)
+            # unique(c(unlist(all_intx), names(relevant_levels)))
         )
 
     reference_levels <-
@@ -82,36 +90,47 @@ build_missing_terms <- function(modelobj, data) {
                 covars_to_expand <-
                     custom_xlevels[which(names(custom_xlevels) %in% this_interaction)]
 
-                apply(
-                    expand.grid(covars_to_expand, stringsAsFactors = FALSE),
-                    1,
-                    function(...) {
-                        paste0(..., collapse = ":")
-                    }
-                )
+                # This makes expand.grid() sort the names in their supposed factor
+                # level order.
+                pairs_grid <- expand.grid(covars_to_expand, stringsAsFactors = TRUE)
+                pairs_grid <- pairs_grid[do.call(order, as.list(pairs_grid)), ]
+
+                result <-
+                    apply(
+                        pairs_grid,
+                        1,
+                        function(...) {
+                            paste0(..., collapse = ":")
+                        }
+                    )
+
+                unname(result)
             },
             all_intx
         )
+
+    # Remove all interaction terms from the unexpanded from the xlevels, then
+    # replace them with their expanded versions. This works because interactions
+    # go on the end of the model results by default, and then I am producing the
+    # expanded names in the order that they appear in the original model.
+    custom_xlevels[names(custom_xlevels) %in% names(constructed_terms)] <- NULL
+    final_terms <- unlist(append(custom_xlevels, constructed_terms), use.names = FALSE)
 
 
     # 4. Return the results.
     original_terms <- names(stats::coef(modelobj))
 
-    missing_terms <- unlist(constructed_terms, use.names = FALSE)
-    missing_terms <- missing_terms[!(missing_terms %in% original_terms)]
+    with_singletons <- c(original_terms[!(original_terms %in% final_terms)], final_terms)
 
-    filled_terms <- unique(c(original_terms, missing_terms))
-    sorted_filled_terms <- filled_terms[order(grepl(":", filled_terms, fixed = TRUE))]
+    filled_terms <- with_singletons[!(with_singletons %in% reference_levels)]
 
-    with_singletons <- unique(c(unlist(custom_xlevels, use.names = FALSE), original_terms, missing_terms))
-    sorted_singletons <- with_singletons[order(grepl(":", with_singletons, fixed = TRUE))]
+    missing_terms <- filled_terms[!(filled_terms %in% original_terms)]
 
     list(
         original_terms   = original_terms,
         missing_terms    = missing_terms,
-        filled_terms     = sorted_filled_terms,
-        with_singletons  = sorted_singletons,
-        reference_levels = reference_levels,
-        custom_xlevels   = custom_xlevels
+        filled_terms     = filled_terms,
+        with_singletons  = with_singletons,
+        reference_levels = reference_levels
     )
 }

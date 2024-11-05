@@ -24,3 +24,4 @@ R does not return interactions of covariates that involve the reference
 levels of factors. This function finds all of the interactions in a model,
 crosses all of the levels together, and returns that information and more.
 }
+\keyword{internal}

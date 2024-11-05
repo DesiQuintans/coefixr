@@ -14,7 +14,7 @@
 #' # cancer_modified is a built-in dataset provided with the `coefixr` package.
 #' my_model <- lm(status ~ age + sex * ph.ecog + sex * wt.loss, data = cancer_modified)
 #'
-#' summary(my_model)
+#' rownames(summary(my_model)$coefficients)
 #' adjust_interaction_model(my_model, cancer_modified, exponentiate = TRUE)
 #'
 adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
@@ -58,6 +58,10 @@ adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
     result <- merge(result, final_ci_lwr, by = "covar", all = TRUE)
     result <- merge(result, final_coef,   by = "covar", all = TRUE)
     result <- merge(result, final_ci_upr, by = "covar", all = TRUE)
+
+    rownames(result) <- result$covar
+    result <- result[final_covars$covar, ]
+    rownames(result) <- NULL
 
 
     # 3. Add exponentiated values if asked for.

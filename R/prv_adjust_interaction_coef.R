@@ -12,6 +12,7 @@
 #' @return A Numeric vector, where the names are all of the terms from the
 #'     model, and the values are the adjusted coefficients.
 #' @md
+#' @keywords internal
 #'
 adjust_interaction_coef <- function(modelobj, data) {
     # 1. Get the names of the effects and the estimates of each.

@@ -20,3 +20,4 @@ each vector are the names of the terms from the model.
 Simply uses the adjusted coefficients and SEs to recalculate the 95\%
 confidence interval.
 }
+\keyword{internal}

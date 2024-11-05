@@ -21,3 +21,4 @@ For example, if a model has the term "SexMale", then it will simply get the
 coefficient it already has. However, the term "SexMale:EducationPrimary" would
 be adjusted as "SexMale:EducationPrimary + SexMale + EducationPrimary".
 }
+\keyword{internal}

@@ -19,3 +19,4 @@ model and multiplying the off-diagonal cells (covariances) by 2, then
 2) selecting the cells that are relevant to the current term, then
 3) summing all those together and taking their square root.
 }
+\keyword{internal}

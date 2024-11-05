@@ -19,3 +19,4 @@ A data frame.
 \description{
 Convert a named vector into a two-column data frame
 }
+\keyword{internal}
