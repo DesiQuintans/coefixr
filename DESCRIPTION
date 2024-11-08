@@ -1,6 +1,6 @@
 Package: coefixr
 Title: Adjusted Estimates For Interactions In Models
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Desi", "Quintans", , "science@desiquintans.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3356-0293"))
@@ -14,7 +14,8 @@ RoxygenNote: 7.3.2
 Depends: 
     R (>= 3.6.0)
 Imports:
-    stats (>= 3.6.0)
+    stats (>= 3.6.0),
+    car (>= 3.1-2)
 Suggests:
     coxme (>= 2.2)
 LazyData: true
