@@ -22,7 +22,7 @@ adjust_interaction_coef <- function(modelobj, data) {
 
     # 2. Get an exploded list of the terms in the model, including reference
     # levels.
-    filled_terms <- build_missing_terms(modelobj, data = data)$only_intx_ref_levels
+    filled_terms <- build_missing_terms(modelobj, data = data)$all_ref_levels
 
     split_terms <-
         mapply(
@@ -60,11 +60,9 @@ adjust_interaction_coef <- function(modelobj, data) {
             function(coef_list) {
                 coef_list <- suppressWarnings(as.numeric(coef_list))
 
-                # If every coefficient is missing, then this is the interaction
-                # of reference levels, and the coefficient should be set to 0.00
-                # (since this is not exponentiated yet).
+                # If every coefficient is missing, then this is a reference level.
                 if (all(is.na(coef_list))) {
-                    return(0.00)
+                    return(NA)
                 } else {
                     return(sum(coef_list, na.rm = TRUE))
                 }
