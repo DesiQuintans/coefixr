@@ -58,6 +58,30 @@ adjust_interaction_model <- function(modelobj, data,
 
     # 2. Get the global p-value, if it was asked for.
     if (add.global.p == TRUE) {
+        # REALLY BAD HACK: model.frame() tries to use non-standard evaluation to find the
+        # dataframe used to fit the model:
+        #
+        #   eval(temp, environment(formula$terms), parent.frame())
+        #
+        # And it throws an error if no dataframe with that name exists. For
+        # example, if you fit a model on a dataframe called "model_input", then
+        # your error will be:
+        #
+        #   Error in eval(temp, environment(formula$terms), parent.frame()) :
+        #       object 'model_input' not found
+        #
+        # https://stackoverflow.com/questions/37364571/r-model-frame-and-non-standard-evaluation
+        #
+        # Unfortunately, it looks in the parent frame to find this so I can't
+        # just create it temporarily.
+        if (!is.null(modelobj$call$data)) {
+            data_name <- deparse(modelobj$call$data)
+
+            if (!exists(data_name, envir = parent.frame())) {
+                assign(data_name, data, envir = parent.frame())
+            }
+        }
+
         anova_res <- suppressWarnings(car::Anova(modelobj))
         anova_p <- anova_res[, grepl("^(p)", dimnames(anova_res)[[2]], ignore.case = TRUE)]
 
