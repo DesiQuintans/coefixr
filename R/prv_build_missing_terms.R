@@ -81,6 +81,8 @@ build_missing_terms <- function(modelobj, data) {
             !is.null(data)
     )
 
+    original_terms <- names(stats::coef(modelobj))
+
     all_levels <- Map(levels, data)
     all_independent_vars <- unique(unlist(strsplit(attr(modelobj$terms, "term.labels"), ":")))
 
@@ -120,19 +122,6 @@ build_missing_terms <- function(modelobj, data) {
             colnames(all_vars)
         )
 
-    reference_levels <-
-        unlist(
-            Map(
-                function(varname) {
-                    if (!is.null(relevant_levels[[varname]])) {
-                        paste0(varname, relevant_levels[[varname]][[1]])
-                    }
-                },
-
-                names(relevant_levels)
-            )
-        )
-
 
     # 3. Construct the final terms by crossing the variables used in each
     # interaction.
@@ -168,6 +157,21 @@ build_missing_terms <- function(modelobj, data) {
     custom_xlevels[names(custom_xlevels) %in% names(constructed_terms)] <- NULL
     final_terms <- append(custom_xlevels, constructed_terms)
 
+    reference_levels <-
+        unlist(
+            Map(
+                function(fctlvl) {
+                    fctlvl[!(fctlvl %in% original_terms)]
+                    # if (!is.null(relevant_levels[[varname]])) {
+                    #     paste0(varname, relevant_levels[[varname]][[1]])
+                    # }
+                },
+
+                # All
+                final_terms[!grepl(":", names(final_terms))]
+            )
+        )
+
     # This is a version that has the covariate's name itself inserted above the
     # covariates's levels (if any).
     final_terms_with_varnames <-
@@ -184,8 +188,6 @@ build_missing_terms <- function(modelobj, data) {
 
 
     # 4. Return the results.
-    original_terms <- names(stats::coef(modelobj))
-
     complete_terms <- c(original_terms[!(original_terms %in% final_terms_with_varnames)], final_terms_with_varnames)
 
     all_ref_levels <-
