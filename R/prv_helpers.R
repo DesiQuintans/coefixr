@@ -51,3 +51,55 @@ round_n <- function(num, digits = 2) {
 
     result
 }
+
+
+
+# Round a p-value to a specific number of digits
+#
+# Very small or very large p-values are also handled. The output of this
+# function is the same as `gtsummary::style_pvalue()`.
+#
+# @param pval (Numeric) A vector of p-values.
+# @param digits (Numeric) Number of digits.
+#
+# @return A Character vector.
+# @md
+# @keywords internal
+round_p <- function(pval, digits = 3) {
+    if (is.infinite(digits)) {
+        return(pval)
+    }
+
+    small_p <-
+        as.numeric(
+            paste0("0.", paste(rep("0", digits - 1), collapse = ""), "1")
+        )
+
+    big_p <-
+        as.numeric(
+            paste0("0.", paste(rep("9", digits), collapse = ""))
+        )
+
+    # Borrowed the logic of `gtsummary::style_pvalue`, but in base R.
+    result <- character(length(pval))
+
+    for (i in seq_along(pval)) {
+        if (is.na(pval[i])) {
+            result[i] <- NA_character_
+        } else if (pval[i] > 1 + 1e-15) {
+            result[i] <- NA_character_
+        } else if (pval[i] < 0 - 1e-15) {
+            result[i] <- NA_character_
+        } else if (pval[i] > big_p) {
+            result[i] <- paste0(">", big_p)
+        } else if (pval[i] >= small_p) {
+            result[i] <- round_n(pval[i], digits = digits)
+        } else if (pval[i] < small_p) {
+            result[i] <- paste0("<", small_p)
+        }
+    }
+
+    names(result) <- names(pval)
+
+    result
+}
