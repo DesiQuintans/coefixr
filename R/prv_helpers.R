@@ -24,3 +24,30 @@ named_to_df <- function(vec, value = "value", name = "covar") {
 
     return(result)
 }
+
+
+
+# Round a number to a specific number of digits
+#
+# @param num (Numeric) A vector of numbers.
+# @param digits (Numeric) Number of digits.
+#
+# @return A Numeric vector.
+# @md
+# @keywords internal
+round_n <- function(num, digits = 2) {
+    if (is.infinite(digits)) {
+        return(num)
+    }
+
+    fmt <- paste0("%.", digits, "f")
+
+    result <-
+        suppressWarnings(
+            as.numeric(sprintf(fmt, num))
+        )
+
+    names(result) <- names(num)
+
+    result
+}
