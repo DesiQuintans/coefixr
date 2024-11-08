@@ -32,7 +32,7 @@ named_to_df <- function(vec, value = "value", name = "covar") {
 # @param num (Numeric) A vector of numbers.
 # @param digits (Numeric) Number of digits.
 #
-# @return A Numeric vector.
+# @return A Character vector.
 # @md
 # @keywords internal
 round_n <- function(num, digits = 2) {
@@ -44,7 +44,7 @@ round_n <- function(num, digits = 2) {
 
     result <-
         suppressWarnings(
-            as.numeric(sprintf(fmt, num))
+            sprintf(fmt, num)
         )
 
     names(result) <- names(num)
