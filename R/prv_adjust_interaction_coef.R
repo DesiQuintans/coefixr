@@ -1,19 +1,19 @@
 
-#' Adjust an interaction term's coefficients
-#'
-#' The adjustment is done by summing all of the coefficients that go into a term.
-#' For example, if a model has the term "SexMale", then it will simply get the
-#' coefficient it already has. However, the term "SexMale:EducationPrimary" would
-#' be adjusted as "SexMale:EducationPrimary + SexMale + EducationPrimary".
-#'
-#' @param modelobj (Object) A model object.
-#' @param data (Dataframe) The data used to fit the model.
-#'
-#' @return A Numeric vector, where the names are all of the terms from the
-#'     model, and the values are the adjusted coefficients.
-#' @md
-#' @keywords internal
-#'
+# Adjust an interaction term's coefficients
+#
+# The adjustment is done by summing all of the coefficients that go into a term.
+# For example, if a model has the term "SexMale", then it will simply get the
+# coefficient it already has. However, the term "SexMale:EducationPrimary" would
+# be adjusted as "SexMale:EducationPrimary + SexMale + EducationPrimary".
+#
+# @param modelobj (Object) A model object.
+# @param data (Dataframe) The data used to fit the model.
+#
+# @return A Numeric vector, where the names are all of the terms from the
+#     model, and the values are the adjusted coefficients.
+# @md
+# @keywords internal
+#
 adjust_interaction_coef <- function(modelobj, data) {
     # 1. Get the names of the effects and the estimates of each.
     mdl_terms <- names(stats::coef(modelobj))

@@ -1,17 +1,17 @@
 
-#' Adjust an interaction term's confidence interval (CI)
-#'
-#' Simply uses the adjusted coefficients and SEs to recalculate the 95%
-#' confidence interval.
-#'
-#' @param modelobj (Object) A model object.
-#' @param data (Dataframe) The data used to fit the model.
-#'
-#' @return A named List. `$lwr` and `$upr` contain named Numeric vectors that
-#' are the lower and upper 95% confidence interval, respectively. The names in
-#' each vector are the names of the terms from the model.
-#' @md
-#' @keywords internal
+# Adjust an interaction term's confidence interval (CI)
+#
+# Simply uses the adjusted coefficients and SEs to recalculate the 95%
+# confidence interval.
+#
+# @param modelobj (Object) A model object.
+# @param data (Dataframe) The data used to fit the model.
+#
+# @return A named List. `$lwr` and `$upr` contain named Numeric vectors that
+# are the lower and upper 95% confidence interval, respectively. The names in
+# each vector are the names of the terms from the model.
+# @md
+# @keywords internal
 #
 adjust_interaction_ci <- function(modelobj, data) {
     # 1. Get model's adjusted estimates and SEs.
