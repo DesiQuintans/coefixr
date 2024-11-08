@@ -64,8 +64,8 @@ adjust_interaction_model <- function(modelobj, data,
         #   eval(temp, environment(formula$terms), parent.frame())
         #
         # And it throws an error if no dataframe with that name exists. For
-        # example, if you fit a model on a dataframe called "model_input", then
-        # your error will be:
+        # example, if you fit a model on a dataframe called "model_input" and
+        # it doesn't exist in your global environment, then your error will be:
         #
         #   Error in eval(temp, environment(formula$terms), parent.frame()) :
         #       object 'model_input' not found
@@ -73,7 +73,8 @@ adjust_interaction_model <- function(modelobj, data,
         # https://stackoverflow.com/questions/37364571/r-model-frame-and-non-standard-evaluation
         #
         # Unfortunately, it looks in the parent frame to find this so I can't
-        # just create it temporarily.
+        # just create it temporarily, I have to create it there. Best I can do
+        # is only do so if it doesn't already exist.
         if (!is.null(modelobj$call$data)) {
             data_name <- deparse(modelobj$call$data)
 
