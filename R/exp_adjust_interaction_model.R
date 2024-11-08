@@ -19,6 +19,11 @@
 #'
 adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
     # 0. Set up the sources of information.
+adjust_interaction_model <- function(modelobj, data,
+                                     exponentiate = FALSE,
+                                     add.global.p = FALSE,
+                                     digits.n     = 2,
+                                     digits.p     = 3) {
     # 1. Get the names of terms, which will become the rows of the output table.
     built_terms <- build_missing_terms(modelobj = modelobj, data = data)
 
@@ -29,6 +34,22 @@ adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
             ref.intx = built_terms$complete_terms %in% built_terms$missing_terms
         )
 
+
+    # 2. Get the global p-value, if it was asked for.
+    if (add.global.p == TRUE) {
+        anova_res <- suppressWarnings(car::Anova(modelobj))
+
+        final_global_p <- data.frame(
+            covar    = rownames(anova_res),
+            global.p = round_p(anova_res[, 4], digits = digits.p)
+        )
+    } else {
+        final_global_p <- data.frame(covar = character(0))
+    }
+
+
+    # 3. Get the p-values for each covariate. This assumes that an appropriate
+    # summary() method is available for the model type.
     model_smry <- NULL
 
     if (inherits(modelobj, "coxme")) {
@@ -43,45 +64,64 @@ adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
              "The class of your model is '", paste(class(modelobj), sep = " "), "'.")
     }
 
-    model_coef <- adjust_interaction_coef(modelobj, data = data)
-    model_ci   <- adjust_interaction_ci(modelobj, data = data)
+    # HACK: Using grepl() to try to get the P value column. It is named
+    # differently depending on the model object, e.g. "p", "Pr(>|z|)",
+    # "P(>|z|)", "Pr(>F)", etc.
+    model_p <- model_smry[, grepl("^(p)", dimnames(model_smry)[[2]], ignore.case = TRUE)]
+
+    final_p <-
+        named_to_df(
+            round_p(model_p, digits = digits.p),
+            "p.value"
+        )
 
 
+    # 4. Get confidence intervals.
+    model_ci    <- adjust_interaction_ci(modelobj, data = data)
 
-    # HACK: Tries to get the P value column. It is named differently depending
-    # on the model object, e.g. "p", "Pr(>|z|)", "P(>|z|)", "Pr(>F)", etc.
-    final_p <- model_smry[, grepl("^(p)", dimnames(model_smry)[[2]], ignore.case = TRUE)]
-    final_p <- named_to_df(final_p, "p.value")
-
-    final_coef <- named_to_df(model_coef, "coef")
-
-    final_ci_lwr <- named_to_df(model_ci$lwr, "ci.95lwr")
-    final_ci_upr <- named_to_df(model_ci$upr, "ci.95upr")
+    if (exponentiate == TRUE) {
+        final_ci_lwr <- named_to_df(round_n(exp(model_ci$lwr), digits = digits.n), "exp_ci.95lwr")
+        final_ci_upr <- named_to_df(round_n(exp(model_ci$upr), digits = digits.n), "exp_ci.95upr")
+    } else {
+        final_ci_lwr <- named_to_df(round_n(model_ci$lwr, digits = digits.n), "log_ci.95lwr")
+        final_ci_upr <- named_to_df(round_n(model_ci$upr, digits = digits.n), "log_ci.95upr")
+    }
 
 
-    # 2. Merge into one dataframe.
+    # 5. Get coefficients.
+    model_coef  <- adjust_interaction_coef(modelobj, data = data)
+
+    if (exponentiate == TRUE) {
+        final_coef <- named_to_df(round_n(exp(model_coef), digits = digits.n), "exp_coef")
+    } else {
+        final_coef <- named_to_df(round_n(model_coef, digits = digits.n), "log_coef")
+    }
+
+
+    # 6. Assemble the final dataframe.
     result <- final_covars
-    result <- merge(result, final_p,      by = "covar", all = TRUE)
-    result <- merge(result, final_ci_lwr, by = "covar", all = TRUE)
-    result <- merge(result, final_coef,   by = "covar", all = TRUE)
-    result <- merge(result, final_ci_upr, by = "covar", all = TRUE)
+    result <- merge(result, final_global_p, by = "covar", all.x = TRUE)
+    result <- merge(result, final_p,        by = "covar", all.x = TRUE)
+    result <- merge(result, final_ci_lwr,   by = "covar", all.x = TRUE)
+    result <- merge(result, final_coef,     by = "covar", all.x = TRUE)
+    result <- merge(result, final_ci_upr,   by = "covar", all.x = TRUE)
 
+    # Sort the rows of the result by ordering the rownames of the result
+    # in the same order as the built covariates list.
     rownames(result) <- result$covar
-    result <- result[final_covars$covar, ]
+
+    if (add.global.p == FALSE) {
+        # Don't include the top-level variable names if global p-values
+        # are not requested. Those are only included because the global p-value
+        # is displayed alongside them.
+        result <- result[built_terms$all_ref_levels, ]
+    } else {
+        result <- result[final_covars$covar, ]
+    }
+
     rownames(result) <- NULL
 
 
-    # 3. Add exponentiated values if asked for.
-
-    if (exponentiate == TRUE) {
-        result$ci.95lwr <- exp(result$ci.95lwr)
-        result$coef     <- exp(result$coef)
-        result$ci.95upr <- exp(result$ci.95upr)
-
-        colnames(result)[colnames(result) == "ci.95lwr"] <- "exp_ci.95lwr"
-        colnames(result)[colnames(result) == "coef"]     <- "exp_coef"
-        colnames(result)[colnames(result) == "ci.95upr"] <- "exp_ci.95upr"
-    }
-
+    # 7. Done!
     result
 }
