@@ -1,24 +1,45 @@
 
-#' Return an adjusted `summary()` table for an interaction model
+#' Calculate adjusted coefficients and CIs for models with interactions
 #'
 #' Adjusts the coefficients and CIs of any interaction terms in the model.
 #'
 #' @param modelobj (Object) A model object.
 #' @param data (Dataframe) The data used to fit the model.
 #' @param exponentiate (Logical) If `TRUE`, exponentiates the coefficient and confidence interval.
+#' @param add.global.p (Logical) If `TRUE`, adds a global p-value for each covariate.
+#' @param digits.n (Logical) Number of digits to round coefficients and confidence intervals to.
+#' @param digits.p (Logical) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.
 #'
-#' @return A data frame.
+#' @return A data frame with these columns:
+#'     \describe{
+#'       \item{**covar**}{The covariate.}
+#'       \item{**ref**}{`TRUE` marks the reference levels of covariates.}
+#'       \item{**ref.intx**}{`TRUE` marks interactions that involve the reference level of a covariate.}
+#'       \item{**global.p**}{The global p-value of the covariate. Column is omitted if `add.global.p = FALSE`.}
+#'       \item{**p.value**}{The p-value of the covariate.}
+#'       \item{**log_ci.95lwr** or **exp_ci.95lwr**}{Lower 95% confidence interval of the coefficient. Exponentiated if `exponentiate = TRUE`.}
+#'       \item{**log_coef** or **exp_coef**}{The coefficient. Exponentiated if `exponentiate = TRUE`.}
+#'       \item{**log_ci.95upr** or **exp_ci.95upr**}{Upper 95% confidence interval of the coefficient. Exponentiated if `exponentiate = TRUE`.}
+#'     }
+#'
 #' @export
 #'
 #' @examples
-#' # cancer_modified is a built-in dataset provided with the `coefixr` package.
-#' my_model <- lm(status ~ age + sex * ph.ecog + sex * wt.loss, data = cancer_modified)
+#' # cancer_modified is a dataset provided with the `coefixr` package.
+#' my_model <- lm(status ~ inst + age + sex * ph.ecog + sex * wt.loss, data = cancer_modified)
 #'
-#' rownames(summary(my_model)$coefficients)
+#' # Unexponentiated coefficients.
+#' adjust_interaction_model(my_model, cancer_modified)
+#'
+#' # To get unrounded numbers, set digits.n and digits.p to Inf.
+#' adjust_interaction_model(my_model, cancer_modified, digits.n = Inf, digits.p = Inf)
+#'
+#' # Note that column names change when `exponentiate = TRUE`.
 #' adjust_interaction_model(my_model, cancer_modified, exponentiate = TRUE)
 #'
-adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
-    # 0. Set up the sources of information.
+#' # Global p-values are provided by `car::Anova()`, just like `gtsummary::add_global_p()`.
+#' adjust_interaction_model(my_model, cancer_modified, add.global.p = TRUE)
+#'
 adjust_interaction_model <- function(modelobj, data,
                                      exponentiate = FALSE,
                                      add.global.p = FALSE,
