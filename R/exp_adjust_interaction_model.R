@@ -59,10 +59,11 @@ adjust_interaction_model <- function(modelobj, data,
     # 2. Get the global p-value, if it was asked for.
     if (add.global.p == TRUE) {
         anova_res <- suppressWarnings(car::Anova(modelobj))
+        anova_p <- anova_res[, grepl("^(p)", dimnames(anova_res)[[2]], ignore.case = TRUE)]
 
         final_global_p <- data.frame(
             covar    = rownames(anova_res),
-            global.p = round_p(anova_res[, 4], digits = digits.p)
+            global.p = round_p(anova_p, digits = digits.p)
         )
     } else {
         final_global_p <- data.frame(covar = character(0))
@@ -87,7 +88,7 @@ adjust_interaction_model <- function(modelobj, data,
 
     # HACK: Using grepl() to try to get the P value column. It is named
     # differently depending on the model object, e.g. "p", "Pr(>|z|)",
-    # "P(>|z|)", "Pr(>F)", etc.
+    # "P(>|z|)", "Pr(>F)", "Pr(>Chisq)", etc.
     model_p <- model_smry[, grepl("^(p)", dimnames(model_smry)[[2]], ignore.case = TRUE)]
 
     final_p <-
