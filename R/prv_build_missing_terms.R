@@ -1,22 +1,77 @@
 
-#' Build all of the missing terms in a model
-#'
-#' R does not return interactions of covariates that involve the reference
-#' levels of factors. This function finds all of the interactions in a model,
-#' crosses all of the levels together, and returns that information and more.
-#'
-#' @param modelobj (Object) A model object.
-#' @param data (Dataframe) The data used to fit the model.
-#'
-#' @return A named List.
-#'     - `original_terms` has the original terms given by R.
-#'     - `missing_terms` are the terms that were not originally given, which involve the reference levels of factors in interactions.
-#'     - `filled_terms` is the union of `original_terms` and `missing_terms`.
-#'     - `with_singletons` also includes the reference terms outside interactions.
-#'     - `reference_levels` is the reference level of each Factor used in the model.
-#' @md
-#' @keywords internal
-#'
+# Build all of the missing terms in a model
+#
+# R does not return interactions of covariates that involve the reference
+# levels of factors. This function finds all of the interactions in a model,
+# crosses all of the levels together, and returns that information and more.
+#
+# @param modelobj (Object) A model object.
+# @param data (Dataframe) The data used to fit the model.
+#
+# @return A named List.
+#
+# For a formula `outcome ~ numA + Fct1 * Fct2` with the below columns:
+#     - numA - Numeric
+#     - Fct1 - Factor with levels A, B
+#     - Fct2 - Factor with levels X, Y
+#
+# Then the list items will contain:
+#
+#     - `original_terms` is what R would return:
+#       - numA
+#       - Fct1B
+#       - Fct2Y
+#       - Fct1B:Fct2Y
+#
+#     - `complete_terms` has every possible term, which is the original terms,
+#        plus the names of every covariate, plus all levels of all covariates, plus
+#        all levels in interactions.
+#        - numA
+#        - Fct1
+#        - Fct1A
+#        - Fct1B
+#        - Fct2
+#        - Fct2X
+#        - Fct2Y
+#        - Fct1:Fct2
+#        - Fct1A:Fct2X
+#        - Fct1A:Fct2Y
+#        - Fct1B:Fct2X
+#        - Fct1B:Fct2Y
+#
+#     - `all_ref_levels` is `complete_terms` without the names of covariates.
+#        - numA
+#        - Fct1A
+#        - Fct1B
+#        - Fct2X
+#        - Fct2Y
+#        - Fct1A:Fct2X
+#        - Fct1A:Fct2Y
+#        - Fct1B:Fct2X
+#        - Fct1B:Fct2Y
+#
+#     - `only_intx_ref_levels` only includes reference levels within interactions.
+#        - numA
+#        - Fct1B
+#        - Fct2Y
+#        - Fct1A:Fct2X
+#        - Fct1A:Fct2Y
+#        - Fct1B:Fct2X
+#        - Fct1B:Fct2Y
+#
+#     - `missing_terms` only includes the terms missing from `original_terms`, which
+#       are interactions that involve reference levels.
+#        - Fct1A:Fct2X
+#        - Fct1A:Fct2Y
+#        - Fct1B:Fct2X
+#
+#     - `reference_levels` is a named vector of the reference level of each Factor used in the model.
+#       - Fct1  A
+#       - Fct2  X
+#
+# @md
+# @keywords internal
+#
 build_missing_terms <- function(modelobj, data) {
     # 0. I need to get the levels of factor variables from the original dataset.
     # Normally, models include this in a $xlevels item, but coxme does not, and
@@ -62,9 +117,7 @@ build_missing_terms <- function(modelobj, data) {
                 }
             },
 
-            # TAIL: Doing colnames(all_vars) here gives me the
             colnames(all_vars)
-            # unique(c(unlist(all_intx), names(relevant_levels)))
         )
 
     reference_levels <-
@@ -79,7 +132,6 @@ build_missing_terms <- function(modelobj, data) {
                 names(relevant_levels)
             )
         )
-
 
 
     # 3. Construct the final terms by crossing the variables used in each
@@ -114,23 +166,43 @@ build_missing_terms <- function(modelobj, data) {
     # go on the end of the model results by default, and then I am producing the
     # expanded names in the order that they appear in the original model.
     custom_xlevels[names(custom_xlevels) %in% names(constructed_terms)] <- NULL
-    final_terms <- unlist(append(custom_xlevels, constructed_terms), use.names = FALSE)
+    final_terms <- append(custom_xlevels, constructed_terms)
+
+    # This is a version that has the covariate's name itself inserted above the
+    # covariates's levels (if any).
+    final_terms_with_varnames <-
+        Map(
+            function(nm, vec) {
+                unique(c(nm, vec))
+            },
+            names(final_terms),
+            final_terms
+        )
+
+    final_terms <- unlist(final_terms, use.names = FALSE)
+    final_terms_with_varnames <- unlist(final_terms_with_varnames, use.names = FALSE)
 
 
     # 4. Return the results.
     original_terms <- names(stats::coef(modelobj))
 
-    with_singletons <- c(original_terms[!(original_terms %in% final_terms)], final_terms)
+    complete_terms <- c(original_terms[!(original_terms %in% final_terms_with_varnames)], final_terms_with_varnames)
 
-    filled_terms <- with_singletons[!(with_singletons %in% reference_levels)]
+    all_ref_levels <-
+        complete_terms[complete_terms %in% c(original_terms, final_terms)]
 
-    missing_terms <- filled_terms[!(filled_terms %in% original_terms)]
+    only_intx_ref_levels <-
+        all_ref_levels[!(all_ref_levels %in% reference_levels)]
+
+    missing_terms <-
+        only_intx_ref_levels[!(only_intx_ref_levels %in% original_terms)]
 
     list(
-        original_terms   = original_terms,
-        missing_terms    = missing_terms,
-        filled_terms     = filled_terms,
-        with_singletons  = with_singletons,
-        reference_levels = reference_levels
+        original_terms       = original_terms,
+        complete_terms       = complete_terms,
+        all_ref_levels       = all_ref_levels,
+        only_intx_ref_levels = only_intx_ref_levels,
+        missing_terms        = missing_terms,
+        reference_levels     = reference_levels
     )
 }

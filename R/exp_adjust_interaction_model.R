@@ -19,6 +19,15 @@
 #'
 adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
     # 0. Set up the sources of information.
+    # 1. Get the names of terms, which will become the rows of the output table.
+    built_terms <- build_missing_terms(modelobj = modelobj, data = data)
+
+    final_covars <-
+        data.frame(
+            covar    = built_terms$complete_terms,
+            ref      = built_terms$complete_terms %in% built_terms$reference_levels,
+            ref.intx = built_terms$complete_terms %in% built_terms$missing_terms
+        )
 
     model_smry <- NULL
 
@@ -38,8 +47,6 @@ adjust_interaction_model <- function(modelobj, data, exponentiate = FALSE) {
     model_ci   <- adjust_interaction_ci(modelobj, data = data)
 
 
-    # 1. Get specific bits of info into dataframes for merging.
-    final_covars <- data.frame(covar = names(model_coef))
 
     # HACK: Tries to get the P value column. It is named differently depending
     # on the model object, e.g. "p", "Pr(>|z|)", "P(>|z|)", "Pr(>F)", etc.
