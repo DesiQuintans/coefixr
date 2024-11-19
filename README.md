@@ -253,8 +253,8 @@ $1.96 \times SE$ from the adjusted coefficient. Again, for the
 interaction of `sexMale:ph.ecogNot completely ambulatory` which has an
 adjusted coefficient of $0.6473835$ and an adjusted SE of $0.1303214$:
 
-$$\text{Lower 95% CI:} 0.6473835 - 19.6 \times 0.1303214 = 0.3919536$$
-$$\text{Upper 95% CI:} 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
+$$\text{Lower CI} = 0.6473835 - 19.6 \times 0.1303214 = 0.3919536$$
+$$\text{Upper CI} = 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
 
 ## Comparison to package output
 
