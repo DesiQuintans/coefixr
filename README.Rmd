@@ -1,0 +1,162 @@
+---
+output: 
+    github_document:
+        toc: true
+        toc_depth: 2
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+
+# About `coefixr`
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+`coefixr` adjusts the coefficients and confidence intervals associated with interaction terms in models, including interactions that involve the reference levels of Factors. It should work with a variety of models.
+
+
+# Installation
+
+You can install the development version of `coefixr` from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("pak")
+pak::pak("DesiQuintans/coefixr")
+```
+
+It is not currently on CRAN, nor are there plans to release it there.
+
+
+# Functions available
+
+| Function                     | Description                                                                                         |
+| :--------------------------- | :-------------------------------------------------------------------------------------------------- |
+| `adjust_interaction_model()` | Takes a model and returns a dataframe of adjusted coefficients, confidence intervals, and p-values. |
+| `cancer_modified`            | A built-in dataset for testing.                                                                     |
+
+
+
+# Worked example
+
+Here is an example of fitting a linear model with an interaction on a dataset that is included with `coefixr`.
+
+```{r}
+library(coefixr)
+
+# cancer_modified is a dataset provided with the `coefixr` package.
+str(cancer_modified)
+
+Map(levels, Filter(is.factor, cancer_modified))
+```
+
+This is the example model. It has two interactions: one between two Factors (`sex * ph.ecog`) and another between a Factor and a Numeric (`sex * wt.loss`).
+
+```{r, echo = FALSE}
+options(width = 999)
+```
+
+```{r}
+my_model <- 
+    lm(status ~ inst + age + sex * ph.ecog + sex * wt.loss, 
+       data = cancer_modified)
+
+summary(my_model)$coefficients
+```
+
+
+### Automated calculation with `adjust_interaction_model()`
+
+We can use `adjust_interaction_model()` to adjust the coefficients and confidence intervals of the interactions. For details of those adjustments, see the [Calculations section](#calculations). 
+
+Here, I request non-exponentiated coefficients, a global Type-II p-value for each variable, and output formatted to two decimal places for all numbers. If I wanted unrounded numbers, I would set `digits.n` and `digits.p` to `Inf`.
+
+```{r}
+adjust_interaction_model(
+    modelobj     = my_model, 
+    data         = cancer_modified, 
+    exponentiate = FALSE,
+    add.global.p = TRUE,
+    digits.n     = 2, 
+    digits.p     = 2,
+    global_args  = list(type = "II")
+)
+```
+
+`adjust_interaction_model()` returns a data frame with these columns:
+
+- **covar**
+    - The covariate.
+- **ref**
+    - `TRUE` marks the reference levels of covariates.
+- **ref.intx**
+    - `TRUE` marks interactions that involve the reference level of a covariate.
+- **global.p**
+    - The global p-value of the covariate. Column is omitted if `add.global.p = FALSE`.
+- **p.value**
+    - The p-value of the covariate.
+- **log_ci.95lwr** or **exp_ci.95lwr**
+    - Lower 95% confidence interval of the coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.
+- **log_coef** or **exp_coef**
+    - The coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.
+- **log_ci.95upr** or **exp_ci.95upr**
+    - Upper 95% confidence interval of the coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.
+
+
+
+# Calculations
+
+## Adjusted interaction coefficients
+
+```{r}
+summary(my_model)$coefficients
+```
+
+Coefficients involved in interactions are adjusted by adding the coefficient of the interaction and all of its components together. For example, the interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
+
+- `sexMale` ($0.471133734$)
+- `ph.ecogNot completely ambulatory` ($0.465297213$)
+- `sexMale:ph.ecogNot completely ambulatory` ($-0.289047417$)
+
+$$0.471133734 + 0.465297213 + -0.289047417 = 0.6473835$$
+
+
+## Adjusted standard error (SE)
+
+```{r}
+covm <- vcov(my_model)
+covm[upper.tri(covm, diag = FALSE)] <- NA
+
+covm
+```
+
+
+The standard error (SE) is adjusted using $\sqrt{\text{variances} + 2(\text{covariances})}$ for all terms involved in the interaction. The variance-covariance table is accessed using `stats::vcov()`. For example, using `vcov(my_model)`, the interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
+
+- The variances
+    - `sexMale` ($0.01303826$)
+    - `ph.ecogNot completely ambulatory` ($0.01802702$)
+    - `sexMale:ph.ecogNot completely ambulatory` ($0.03024963$)
+- The covariances
+    - `sexMale` vs `ph.ecogNot completely ambulatory` ($0.007501756$)
+    - `sexMale` vs `sexMale:ph.ecogNot completely ambulatory` ($-0.01191112$)
+    - `ph.ecogNot completely ambulatory` vs `sexMale:ph.ecogNot completely ambulatory` ($-0.01775626$)
+
+$$\sqrt{0.01303826 + 0.01802702 + 0.03024963 + 2(0.007501756 + -0.01191112 + -0.01775626)} = 0.1303214$$
+
+
+## Adjusted 95% confidence interval
+
+The adjusted confidence interval is calculated by subtracting/adding $1.96 \times SE$ from the adjusted coefficient. Again, for the interaction of `sexMale:ph.ecogNot completely ambulatory` which has an adjusted coefficient of $0.6473835$ and an adjusted SE of $0.1303214$:
+
+$$\text{Lower 95% CI:} 0.6473835 - 19.6 \times 0.1303214 = 0.3919536$$
+$$\text{Upper 95% CI:} 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
