@@ -106,10 +106,9 @@ We can use `adjust_interaction_model()` to adjust the coefficients and
 confidence intervals of the interactions. For details of those
 adjustments, see the [Calculations section](#calculations).
 
-Here, I request non-exponentiated coefficients, a global Type-II p-value
-for each variable, and output formatted to two decimal places for all
-numbers. If I wanted unrounded numbers, I would set `digits.n` and
-`digits.p` to `Inf`.
+Here, I request non-exponentiated (i.e. log) coefficients, a global
+Type-II p-value for each variable, and output formatted to 2 decimal
+places for coefficients and 3 decimals places for p-values.
 
 ``` r
 adjust_interaction_model(
@@ -118,34 +117,34 @@ adjust_interaction_model(
     exponentiate = FALSE,
     add.global.p = TRUE,
     digits.n     = 2, 
-    digits.p     = 2,
+    digits.p     = 3,
     global_args  = list(type = "II")
 )
 #>                                                     covar   ref ref.intx global.p p.value log_ci.95lwr log_coef log_ci.95upr
-#> 1                                             (Intercept) FALSE    FALSE     <NA>   <0.01         0.72     1.14         1.56
-#> 2                                                    inst FALSE    FALSE     0.01    <NA>         <NA>     <NA>         <NA>
+#> 1                                             (Intercept) FALSE    FALSE     <NA>  <0.001         0.72     1.14         1.56
+#> 2                                                    inst FALSE    FALSE    0.014    <NA>         <NA>     <NA>         <NA>
 #> 3                                         instSites 01-10  TRUE    FALSE     <NA>    <NA>         0.00     0.00         0.00
-#> 4                                         instSites 11-20 FALSE    FALSE     <NA>    0.02        -0.28    -0.15        -0.02
-#> 5                                         instSites 20-33 FALSE    FALSE     <NA>    0.01        -0.37    -0.21        -0.05
-#> 6                                                     age FALSE    FALSE     0.21    0.21        -0.00     0.00         0.01
-#> 7                                                     sex FALSE    FALSE    <0.01    <NA>         <NA>     <NA>         <NA>
+#> 4                                         instSites 11-20 FALSE    FALSE     <NA>   0.021        -0.28    -0.15        -0.02
+#> 5                                         instSites 20-33 FALSE    FALSE     <NA>   0.011        -0.37    -0.21        -0.05
+#> 6                                                     age FALSE    FALSE    0.213   0.213        -0.00     0.00         0.01
+#> 7                                                     sex FALSE    FALSE   <0.001    <NA>         <NA>     <NA>         <NA>
 #> 8                                               sexFemale  TRUE    FALSE     <NA>    <NA>         0.00     0.00         0.00
-#> 9                                                 sexMale FALSE    FALSE     <NA>   <0.01         0.25     0.47         0.69
-#> 10                                                ph.ecog FALSE    FALSE    <0.01    <NA>         <NA>     <NA>         <NA>
+#> 9                                                 sexMale FALSE    FALSE     <NA>  <0.001         0.25     0.47         0.69
+#> 10                                                ph.ecog FALSE    FALSE    0.003    <NA>         <NA>     <NA>         <NA>
 #> 11                                    ph.ecogAsymptomatic  TRUE    FALSE     <NA>    <NA>         0.00     0.00         0.00
-#> 12           ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>   <0.01         0.20     0.42         0.63
-#> 13                       ph.ecogNot completely ambulatory FALSE    FALSE     <NA>   <0.01         0.20     0.47         0.73
-#> 14                                                wt.loss FALSE    FALSE     0.34    0.28        -0.01    -0.00         0.00
-#> 15                                            sex:ph.ecog FALSE    FALSE    <0.01    <NA>         <NA>     <NA>         <NA>
+#> 12           ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>  <0.001         0.20     0.42         0.63
+#> 13                       ph.ecogNot completely ambulatory FALSE    FALSE     <NA>  <0.001         0.20     0.47         0.73
+#> 14                                                wt.loss FALSE    FALSE    0.337   0.283        -0.01    -0.00         0.00
+#> 15                                            sex:ph.ecog FALSE    FALSE    0.010    <NA>         <NA>     <NA>         <NA>
 #> 16                          sexFemale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>         0.00     0.00         0.00
 #> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory FALSE     TRUE     <NA>    <NA>         0.20     0.42         0.63
 #> 18             sexFemale:ph.ecogNot completely ambulatory FALSE     TRUE     <NA>    <NA>         0.20     0.47         0.73
 #> 19                            sexMale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>         0.25     0.47         0.69
-#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>   <0.01         0.24     0.45         0.66
-#> 21               sexMale:ph.ecogNot completely ambulatory FALSE    FALSE     <NA>    0.10         0.39     0.65         0.90
-#> 22                                            sex:wt.loss FALSE    FALSE     0.56    <NA>         <NA>     <NA>         <NA>
+#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>   0.002         0.24     0.45         0.66
+#> 21               sexMale:ph.ecogNot completely ambulatory FALSE    FALSE     <NA>   0.098         0.39     0.65         0.90
+#> 22                                            sex:wt.loss FALSE    FALSE    0.557    <NA>         <NA>     <NA>         <NA>
 #> 23                                      sexFemale:wt.loss FALSE     TRUE     <NA>    <NA>        -0.01    -0.00         0.00
-#> 24                                        sexMale:wt.loss FALSE    FALSE     <NA>    0.56         0.25     0.47         0.69
+#> 24                                        sexMale:wt.loss FALSE    FALSE     <NA>   0.557         0.25     0.47         0.69
 ```
 
 `adjust_interaction_model()` returns a data frame with these columns:
@@ -196,9 +195,11 @@ summary(my_model)$coefficients
 ```
 
 Coefficients involved in interactions are adjusted by adding the
-coefficient of the interaction and all of its components together. For
-example, the interaction of `sexMale:ph.ecogNot completely ambulatory`
-involves:
+coefficient of the interaction and all of its components together.
+Reference levels of Factors are set to 0.
+
+For example, the interaction of
+`sexMale:ph.ecogNot completely ambulatory` involves:
 
 - `sexMale` ($0.471133734$)
 - `ph.ecogNot completely ambulatory` ($0.465297213$)
@@ -230,8 +231,10 @@ covm
 The standard error (SE) is adjusted using
 $\sqrt{\sum\text{variances} + 2(\sum\text{covariances})}$ for all terms
 involved in the interaction. The variance-covariance table is accessed
-using `stats::vcov()`. For example, using `vcov(my_model)`, the
-interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
+using `stats::vcov()`. Terms that do not appear in the `vcov()` matrix
+(namely, reference levels and interactions involving reference levels)
+are set to 0. For example, using `vcov(my_model)`, the interaction of
+`sexMale:ph.ecogNot completely ambulatory` involves:
 
 - The variances
   - `sexMale` ($0.01303826$)

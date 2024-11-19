@@ -78,7 +78,7 @@ summary(my_model)$coefficients
 
 We can use `adjust_interaction_model()` to adjust the coefficients and confidence intervals of the interactions. For details of those adjustments, see the [Calculations section](#calculations). 
 
-Here, I request non-exponentiated coefficients, a global Type-II p-value for each variable, and output formatted to two decimal places for all numbers. If I wanted unrounded numbers, I would set `digits.n` and `digits.p` to `Inf`.
+Here, I request non-exponentiated (i.e. log) coefficients, a global Type-II p-value for each variable, and output formatted to 2 decimal places for coefficients and 3 decimals places for p-values.
 
 ```{r}
 adjust_interaction_model(
@@ -87,7 +87,7 @@ adjust_interaction_model(
     exponentiate = FALSE,
     add.global.p = TRUE,
     digits.n     = 2, 
-    digits.p     = 2,
+    digits.p     = 3,
     global_args  = list(type = "II")
 )
 ```
@@ -121,7 +121,9 @@ adjust_interaction_model(
 summary(my_model)$coefficients
 ```
 
-Coefficients involved in interactions are adjusted by adding the coefficient of the interaction and all of its components together. For example, the interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
+Coefficients involved in interactions are adjusted by adding the coefficient of the interaction and all of its components together. Reference levels of Factors are set to 0.
+
+For example, the interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
 
 - `sexMale` ($0.471133734$)
 - `ph.ecogNot completely ambulatory` ($0.465297213$)
@@ -140,7 +142,7 @@ covm
 ```
 
 
-The standard error (SE) is adjusted using $\sqrt{\sum\text{variances} + 2(\sum\text{covariances})}$ for all terms involved in the interaction. The variance-covariance table is accessed using `stats::vcov()`. For example, using `vcov(my_model)`, the interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
+The standard error (SE) is adjusted using $\sqrt{\sum\text{variances} + 2(\sum\text{covariances})}$ for all terms involved in the interaction. The variance-covariance table is accessed using `stats::vcov()`. Terms that do not appear in the `vcov()` matrix (namely, reference levels and interactions involving reference levels) are set to 0. For example, using `vcov(my_model)`, the interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
 
 - The variances
     - `sexMale` ($0.01303826$)
