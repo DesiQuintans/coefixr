@@ -7,8 +7,8 @@
 #' @param data (Dataframe) The data used to fit the model.
 #' @param exponentiate (Logical) If `TRUE`, exponentiates the coefficient and confidence interval.
 #' @param add.global.p (Logical) If `TRUE`, calculates a global p-value for each covariate.
-#' @param digits.n (Logical) Number of digits to round coefficients and confidence intervals to.
-#' @param digits.p (Logical) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.
+#' @param digits.n (Numeric) Number of digits to round coefficients and confidence intervals to.
+#' @param digits.p (Numeric) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.
 #' @param global_args (Named list) Arguments to pass to [car::Anova()]. Ignored if `add.global.p = FALSE`.
 #'
 #' @return A data frame with these columns:
@@ -45,8 +45,8 @@ adjust_interaction_model <- function(modelobj,
                                      data,
                                      exponentiate = FALSE,
                                      add.global.p = FALSE,
-                                     digits.n     = 2,
-                                     digits.p     = 3,
+                                     digits.n     = Inf,
+                                     digits.p     = Inf,
                                      global_args  = NULL) {
     # 1. Get the names of terms, which will become the rows of the output table.
     built_terms <- build_missing_terms(modelobj = modelobj, data = data)

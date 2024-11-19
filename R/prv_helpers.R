@@ -35,7 +35,7 @@ named_to_df <- function(vec, value = "value", name = "covar") {
 # @return A Character vector.
 # @md
 # @keywords internal
-round_n <- function(num, digits = 2) {
+round_n <- function(num, digits = Inf) {
     if (is.infinite(digits)) {
         return(num)
     }
@@ -65,7 +65,7 @@ round_n <- function(num, digits = 2) {
 # @return A Character vector.
 # @md
 # @keywords internal
-round_p <- function(pval, digits = 3) {
+round_p <- function(pval, digits = Inf) {
     if (is.infinite(digits)) {
         return(pval)
     }
