@@ -1,13 +1,14 @@
 
 - [About `coefixr`](#about-coefixr)
 - [Installation](#installation)
-- [Functions available](#functions-available)
+- [Package contents](#package-contents)
 - [Worked example](#worked-example)
 - [Calculations](#calculations)
   - [Adjusted interaction
     coefficients](#adjusted-interaction-coefficients)
   - [Adjusted standard error (SE)](#adjusted-standard-error-se)
   - [Adjusted 95% confidence interval](#adjusted-95-confidence-interval)
+  - [Comparison to package output](#comparison-to-package-output)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -33,11 +34,11 @@ pak::pak("DesiQuintans/coefixr")
 
 It is not currently on CRAN, nor are there plans to release it there.
 
-# Functions available
+# Package contents
 
 | Function | Description |
 |:---|:---|
-| `adjust_interaction_model()` | Takes a model and returns a dataframe of adjusted coefficients, confidence intervals, and p-values. |
+| `adjust_interaction_model()` | Takes a model and returns a dataframe of adjusted coefficients and confidence intervals. |
 | `cancer_modified` | A built-in dataset for testing. |
 
 # Worked example
@@ -160,7 +161,8 @@ adjust_interaction_model(
   - The global p-value of the covariate. Column is omitted if
     `add.global.p = FALSE`.
 - **p.value**
-  - The p-value of the covariate.
+  - The p-value of the covariate. P-values are inherited from the
+    model’s `summary()` method and not recalculated.
 - **log_ci.95lwr** or **exp_ci.95lwr**
   - Lower 95% confidence interval of the coefficient. If
     `exponentiate = TRUE`, the column’s name is changed and the contents
@@ -226,10 +228,10 @@ covm
 ```
 
 The standard error (SE) is adjusted using
-$\sqrt{\text{variances} + 2(\text{covariances})}$ for all terms involved
-in the interaction. The variance-covariance table is accessed using
-`stats::vcov()`. For example, using `vcov(my_model)`, the interaction of
-`sexMale:ph.ecogNot completely ambulatory` involves:
+$\sqrt{\sum\text{variances} + 2(\sum\text{covariances})}$ for all terms
+involved in the interaction. The variance-covariance table is accessed
+using `stats::vcov()`. For example, using `vcov(my_model)`, the
+interaction of `sexMale:ph.ecogNot completely ambulatory` involves:
 
 - The variances
   - `sexMale` ($0.01303826$)
@@ -253,3 +255,14 @@ adjusted coefficient of $0.6473835$ and an adjusted SE of $0.1303214$:
 
 $$\text{Lower 95% CI:} 0.6473835 - 19.6 \times 0.1303214 = 0.3919536$$
 $$\text{Upper 95% CI:} 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
+
+## Comparison to package output
+
+``` r
+res <- adjust_interaction_model(my_model, cancer_modified, digits.n = Inf)
+
+res[which(res$covar == "sexMale:ph.ecogNot completely ambulatory"),
+    c("covar", "log_ci.95lwr", "log_coef", "log_ci.95upr")]
+#>                                       covar log_ci.95lwr  log_coef log_ci.95upr
+#> 17 sexMale:ph.ecogNot completely ambulatory    0.3919536 0.6473835    0.9028135
+```
