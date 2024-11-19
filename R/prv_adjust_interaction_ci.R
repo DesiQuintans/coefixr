@@ -59,9 +59,9 @@ adjust_interaction_ci <- function(modelobj, data) {
         )
 
 
-    # 4. Terms still missing CIs are reference terms, and should be set to 1.
-    missing_lwr[is.na(missing_lwr)] <- 1.00
-    missing_upr[is.na(missing_upr)] <- 1.00
+    # 4. Terms still missing CIs are reference terms, and should be set to 0.
+    missing_lwr[is.na(missing_lwr)] <- 0.00
+    missing_upr[is.na(missing_upr)] <- 0.00
 
 
     # 5. Return all of the CIs.
