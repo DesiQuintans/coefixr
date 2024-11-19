@@ -9,8 +9,8 @@ adjust_interaction_model(
   data,
   exponentiate = FALSE,
   add.global.p = FALSE,
-  digits.n = 2,
-  digits.p = 3,
+  digits.n = Inf,
+  digits.p = Inf,
   global_args = NULL
 )
 }
@@ -23,9 +23,9 @@ adjust_interaction_model(
 
 \item{add.global.p}{(Logical) If \code{TRUE}, calculates a global p-value for each covariate.}
 
-\item{digits.n}{(Logical) Number of digits to round coefficients and confidence intervals to.}
+\item{digits.n}{(Numeric) Number of digits to round coefficients and confidence intervals to.}
 
-\item{digits.p}{(Logical) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.}
+\item{digits.p}{(Numeric) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.}
 
 \item{global_args}{(Named list) Arguments to pass to \code{\link[car:Anova]{car::Anova()}}. Ignored if \code{add.global.p = FALSE}.}
 }
