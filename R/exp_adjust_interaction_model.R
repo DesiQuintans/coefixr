@@ -14,6 +14,8 @@
 #' @return A data frame with these columns:
 #'     \describe{
 #'       \item{**covar**}{The covariate.}
+#'       \item{**is.top**}{`TRUE` marks top-level covariates (i.e. names used in the model formula).}
+#'       \item{**is.intx**}{`TRUE` marks all interactions.}
 #'       \item{**ref**}{`TRUE` marks the reference levels of covariates.}
 #'       \item{**ref.intx**}{`TRUE` marks interactions that involve the reference level of a covariate.}
 #'       \item{**global.p**}{The global p-value of the covariate. Column is omitted if `add.global.p = FALSE`.}
@@ -54,6 +56,8 @@ adjust_interaction_model <- function(modelobj,
     final_covars <-
         data.frame(
             covar    = built_terms$complete_terms,
+            is.top   = built_terms$complete_terms %in% c("(Intercept)", built_terms$toplevel_all),
+            is.intx  = grepl(":", built_terms$complete_terms),
             ref      = built_terms$complete_terms %in% built_terms$reference_levels,
             ref.intx = built_terms$complete_terms %in% built_terms$missing_terms
         )

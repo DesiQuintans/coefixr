@@ -33,6 +33,8 @@ adjust_interaction_model(
 A data frame with these columns:
 \describe{
 \item{\strong{covar}}{The covariate.}
+\item{\strong{is.top}}{\code{TRUE} marks top-level covariates (i.e. names used in the model formula).}
+\item{\strong{is.intx}}{\code{TRUE} marks all interactions.}
 \item{\strong{ref}}{\code{TRUE} marks the reference levels of covariates.}
 \item{\strong{ref.intx}}{\code{TRUE} marks interactions that involve the reference level of a covariate.}
 \item{\strong{global.p}}{The global p-value of the covariate. Column is omitted if \code{add.global.p = FALSE}.}

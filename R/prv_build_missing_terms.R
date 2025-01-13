@@ -39,6 +39,13 @@
 #        - Fct1B:Fct2X
 #        - Fct1B:Fct2Y
 #
+#     - `toplevel_all` is the names of the covariates, similar to how they are
+#       named in the formula.
+#        - numA
+#        - Fct1
+#        - Fct2
+#        - Fct1:Fct2
+#
 #     - `all_ref_levels` is `complete_terms` without the names of covariates.
 #        - numA
 #        - Fct1A
@@ -89,12 +96,15 @@ build_missing_terms <- function(modelobj, data) {
     relevant_levels <- all_levels[names(all_levels) %in% all_independent_vars]
 
 
-    # 1. Get the names of all variables involved in each interaction. Interactions
-    # have ":" in the column name, and covariates used in the interaction are
-    # flagged with `1`.
+    # 1. Get the names of all variables in the model. All top-level variables
+    # appear in the column names. Interactions have ":" in the column name.
     all_vars <- as.data.frame(attr(stats::terms(modelobj), "factors"))
-    all_intx <- subset(all_vars, select = grep(":", colnames(all_vars)))
+    all_toplevel  <- colnames(all_vars)
+
+    # Covariates used in each interaction are flagged with `1`.
+    all_intx <- subset(all_vars, select = grep(":", all_toplevel))
     all_intx <- apply(all_intx, 2, function(y) { names(y)[which(y == 1)] }, simplify = FALSE)
+
 
 
     # 2. Form the model term names. For Factors, it's the variable name and factor
@@ -202,6 +212,7 @@ build_missing_terms <- function(modelobj, data) {
     list(
         original_terms       = original_terms,
         complete_terms       = complete_terms,
+        toplevel_all         = all_toplevel,
         all_ref_levels       = all_ref_levels,
         only_intx_ref_levels = only_intx_ref_levels,
         missing_terms        = missing_terms,

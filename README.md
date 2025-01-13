@@ -121,37 +121,42 @@ adjust_interaction_model(
     digits.p     = 3,
     global_args  = list(type = "II")
 )
-#>                                                     covar   ref ref.intx global.p p.value ci.95lwr  coef ci.95upr
-#> 1                                             (Intercept) FALSE    FALSE     <NA>  <0.001     0.72  1.14     1.56
-#> 2                                                    inst FALSE    FALSE    0.014    <NA>     <NA>  <NA>     <NA>
-#> 3                                         instSites 01-10  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
-#> 4                                         instSites 11-20 FALSE    FALSE     <NA>   0.021    -0.28 -0.15    -0.02
-#> 5                                         instSites 20-33 FALSE    FALSE     <NA>   0.011    -0.37 -0.21    -0.05
-#> 6                                                     age FALSE    FALSE    0.213   0.213    -0.00  0.00     0.01
-#> 7                                                     sex FALSE    FALSE   <0.001    <NA>     <NA>  <NA>     <NA>
-#> 8                                               sexFemale  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
-#> 9                                                 sexMale FALSE    FALSE     <NA>  <0.001     0.25  0.47     0.69
-#> 10                                                ph.ecog FALSE    FALSE    0.003    <NA>     <NA>  <NA>     <NA>
-#> 11                                    ph.ecogAsymptomatic  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
-#> 12           ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>  <0.001     0.20  0.42     0.63
-#> 13                       ph.ecogNot completely ambulatory FALSE    FALSE     <NA>  <0.001     0.20  0.47     0.73
-#> 14                                                wt.loss FALSE    FALSE    0.337   0.283    -0.01 -0.00     0.00
-#> 15                                            sex:ph.ecog FALSE    FALSE    0.010    <NA>     <NA>  <NA>     <NA>
-#> 16                          sexFemale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>     0.00  0.00     0.00
-#> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory FALSE     TRUE     <NA>    <NA>     0.20  0.42     0.63
-#> 18             sexFemale:ph.ecogNot completely ambulatory FALSE     TRUE     <NA>    <NA>     0.20  0.47     0.73
-#> 19                            sexMale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>     0.25  0.47     0.69
-#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>   0.002     0.24  0.45     0.66
-#> 21               sexMale:ph.ecogNot completely ambulatory FALSE    FALSE     <NA>   0.098     0.39  0.65     0.90
-#> 22                                            sex:wt.loss FALSE    FALSE    0.557    <NA>     <NA>  <NA>     <NA>
-#> 23                                      sexFemale:wt.loss FALSE     TRUE     <NA>    <NA>    -0.01 -0.00     0.00
-#> 24                                        sexMale:wt.loss FALSE    FALSE     <NA>   0.557     0.25  0.47     0.69
+#>                                                     covar is.top is.intx   ref ref.intx global.p p.value ci.95lwr  coef ci.95upr
+#> 1                                             (Intercept)   TRUE   FALSE FALSE    FALSE     <NA>  <0.001     0.72  1.14     1.56
+#> 2                                                    inst   TRUE   FALSE FALSE    FALSE    0.014    <NA>     <NA>  <NA>     <NA>
+#> 3                                         instSites 01-10  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 4                                         instSites 11-20  FALSE   FALSE FALSE    FALSE     <NA>   0.021    -0.28 -0.15    -0.02
+#> 5                                         instSites 20-33  FALSE   FALSE FALSE    FALSE     <NA>   0.011    -0.37 -0.21    -0.05
+#> 6                                                     age   TRUE   FALSE FALSE    FALSE    0.213   0.213    -0.00  0.00     0.01
+#> 7                                                     sex   TRUE   FALSE FALSE    FALSE   <0.001    <NA>     <NA>  <NA>     <NA>
+#> 8                                               sexFemale  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 9                                                 sexMale  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.25  0.47     0.69
+#> 10                                                ph.ecog   TRUE   FALSE FALSE    FALSE    0.003    <NA>     <NA>  <NA>     <NA>
+#> 11                                    ph.ecogAsymptomatic  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 12           ph.ecogSymptomatic but completely ambulatory  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.20  0.42     0.63
+#> 13                       ph.ecogNot completely ambulatory  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.20  0.47     0.73
+#> 14                                                wt.loss   TRUE   FALSE FALSE    FALSE    0.337   0.283    -0.01 -0.00     0.00
+#> 15                                            sex:ph.ecog   TRUE    TRUE FALSE    FALSE    0.010    <NA>     <NA>  <NA>     <NA>
+#> 16                          sexFemale:ph.ecogAsymptomatic  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.00  0.00     0.00
+#> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.20  0.42     0.63
+#> 18             sexFemale:ph.ecogNot completely ambulatory  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.20  0.47     0.73
+#> 19                            sexMale:ph.ecogAsymptomatic  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.25  0.47     0.69
+#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory  FALSE    TRUE FALSE    FALSE     <NA>   0.002     0.24  0.45     0.66
+#> 21               sexMale:ph.ecogNot completely ambulatory  FALSE    TRUE FALSE    FALSE     <NA>   0.098     0.39  0.65     0.90
+#> 22                                            sex:wt.loss   TRUE    TRUE FALSE    FALSE    0.557    <NA>     <NA>  <NA>     <NA>
+#> 23                                      sexFemale:wt.loss  FALSE    TRUE FALSE     TRUE     <NA>    <NA>    -0.01 -0.00     0.00
+#> 24                                        sexMale:wt.loss  FALSE    TRUE FALSE    FALSE     <NA>   0.557     0.25  0.47     0.69
 ```
 
 `adjust_interaction_model()` returns a data frame with these columns:
 
 - **covar**
   - The covariate.
+- **is.top**
+  - `TRUE` marks top-level covariates (i.e. names used in the model
+    formula).
+- **is.intx**
+  - `TRUE` marks all interactions.
 - **ref**
   - `TRUE` marks the reference levels of covariates.
 - **ref.intx**

@@ -96,6 +96,10 @@ adjust_interaction_model(
 
 - **covar**
     - The covariate.
+- **is.top**
+    - `TRUE` marks top-level covariates (i.e. names used in the model formula).
+- **is.intx**
+    - `TRUE` marks all interactions.
 - **ref**
     - `TRUE` marks the reference levels of covariates.
 - **ref.intx**
