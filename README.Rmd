@@ -104,16 +104,16 @@ adjust_interaction_model(
     - The global p-value of the covariate. Column is omitted if `add.global.p = FALSE`.
 - **p.value**
     - The p-value of the covariate. P-values are inherited from the model's `summary()` method and not recalculated.
-- **log_ci.95lwr** or **exp_ci.95lwr**
+- **ci.95lwr** or **exp_ci.95lwr**
     - Lower 95% confidence interval of the coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.
-- **log_coef** or **exp_coef**
+- **coef** or **exp_coef**
     - The coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.
-- **log_ci.95upr** or **exp_ci.95upr**
+- **ci.95upr** or **exp_ci.95upr**
     - Upper 95% confidence interval of the coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.
 
 
 
-# Calculations
+# Details re. the calculations performed
 
 ## Adjusted interaction coefficients
 
@@ -171,6 +171,6 @@ $$\text{Upper CI} = 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
 res <- adjust_interaction_model(my_model, cancer_modified, digits.n = Inf)
 
 res[which(res$covar == "sexMale:ph.ecogNot completely ambulatory"),
-    c("covar", "log_ci.95lwr", "log_coef", "log_ci.95upr")]
+    c("covar", "ci.95lwr", "coef", "ci.95upr")]
 ```
 

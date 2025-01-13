@@ -27,7 +27,7 @@ adjust_interaction_model(
 
 \item{digits.p}{(Numeric) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.}
 
-\item{global_args}{(Named list) Arguments to pass to \code{\link[car:Anova]{car::Anova()}}. Ignored if \code{add.global.p = FALSE}.}
+\item{global_args}{(Named list) Arguments to pass to \code{\link[car:Anova]{car::Anova()}}, overriding its defaults. Ignored if \code{add.global.p = FALSE}.}
 }
 \value{
 A data frame with these columns:
@@ -37,9 +37,9 @@ A data frame with these columns:
 \item{\strong{ref.intx}}{\code{TRUE} marks interactions that involve the reference level of a covariate.}
 \item{\strong{global.p}}{The global p-value of the covariate. Column is omitted if \code{add.global.p = FALSE}.}
 \item{\strong{p.value}}{The p-value of the covariate.}
-\item{\strong{log_ci.95lwr} or \strong{exp_ci.95lwr}}{Lower 95\% confidence interval of the coefficient. Exponentiated if \code{exponentiate = TRUE}.}
-\item{\strong{log_coef} or \strong{exp_coef}}{The coefficient. Exponentiated if \code{exponentiate = TRUE}.}
-\item{\strong{log_ci.95upr} or \strong{exp_ci.95upr}}{Upper 95\% confidence interval of the coefficient. Exponentiated if \code{exponentiate = TRUE}.}
+\item{\strong{ci.95lwr} or \strong{exp_ci.95lwr}}{Lower 95\% confidence interval of the coefficient. If \code{exponentiate = TRUE}, the column's name is changed and the contents are exponentiated.}
+\item{\strong{coef} or \strong{exp_coef}}{The coefficient. If \code{exponentiate = TRUE}, the column's name is changed and the contents are exponentiated.}
+\item{\strong{ci.95upr} or \strong{exp_ci.95upr}}{Upper 95\% confidence interval of the coefficient. If \code{exponentiate = TRUE}, the column's name is changed and the contents are exponentiated.}
 }
 }
 \description{

@@ -3,7 +3,8 @@
 - [Installation](#installation)
 - [Package contents](#package-contents)
 - [Worked example](#worked-example)
-- [Calculations](#calculations)
+- [Details re. the calculations
+  performed](#details-re-the-calculations-performed)
   - [Adjusted interaction
     coefficients](#adjusted-interaction-coefficients)
   - [Adjusted standard error (SE)](#adjusted-standard-error-se)
@@ -120,31 +121,31 @@ adjust_interaction_model(
     digits.p     = 3,
     global_args  = list(type = "II")
 )
-#>                                                     covar   ref ref.intx global.p p.value log_ci.95lwr log_coef log_ci.95upr
-#> 1                                             (Intercept) FALSE    FALSE     <NA>  <0.001         0.72     1.14         1.56
-#> 2                                                    inst FALSE    FALSE    0.014    <NA>         <NA>     <NA>         <NA>
-#> 3                                         instSites 01-10  TRUE    FALSE     <NA>    <NA>         0.00     0.00         0.00
-#> 4                                         instSites 11-20 FALSE    FALSE     <NA>   0.021        -0.28    -0.15        -0.02
-#> 5                                         instSites 20-33 FALSE    FALSE     <NA>   0.011        -0.37    -0.21        -0.05
-#> 6                                                     age FALSE    FALSE    0.213   0.213        -0.00     0.00         0.01
-#> 7                                                     sex FALSE    FALSE   <0.001    <NA>         <NA>     <NA>         <NA>
-#> 8                                               sexFemale  TRUE    FALSE     <NA>    <NA>         0.00     0.00         0.00
-#> 9                                                 sexMale FALSE    FALSE     <NA>  <0.001         0.25     0.47         0.69
-#> 10                                                ph.ecog FALSE    FALSE    0.003    <NA>         <NA>     <NA>         <NA>
-#> 11                                    ph.ecogAsymptomatic  TRUE    FALSE     <NA>    <NA>         0.00     0.00         0.00
-#> 12           ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>  <0.001         0.20     0.42         0.63
-#> 13                       ph.ecogNot completely ambulatory FALSE    FALSE     <NA>  <0.001         0.20     0.47         0.73
-#> 14                                                wt.loss FALSE    FALSE    0.337   0.283        -0.01    -0.00         0.00
-#> 15                                            sex:ph.ecog FALSE    FALSE    0.010    <NA>         <NA>     <NA>         <NA>
-#> 16                          sexFemale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>         0.00     0.00         0.00
-#> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory FALSE     TRUE     <NA>    <NA>         0.20     0.42         0.63
-#> 18             sexFemale:ph.ecogNot completely ambulatory FALSE     TRUE     <NA>    <NA>         0.20     0.47         0.73
-#> 19                            sexMale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>         0.25     0.47         0.69
-#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>   0.002         0.24     0.45         0.66
-#> 21               sexMale:ph.ecogNot completely ambulatory FALSE    FALSE     <NA>   0.098         0.39     0.65         0.90
-#> 22                                            sex:wt.loss FALSE    FALSE    0.557    <NA>         <NA>     <NA>         <NA>
-#> 23                                      sexFemale:wt.loss FALSE     TRUE     <NA>    <NA>        -0.01    -0.00         0.00
-#> 24                                        sexMale:wt.loss FALSE    FALSE     <NA>   0.557         0.25     0.47         0.69
+#>                                                     covar   ref ref.intx global.p p.value ci.95lwr  coef ci.95upr
+#> 1                                             (Intercept) FALSE    FALSE     <NA>  <0.001     0.72  1.14     1.56
+#> 2                                                    inst FALSE    FALSE    0.014    <NA>     <NA>  <NA>     <NA>
+#> 3                                         instSites 01-10  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 4                                         instSites 11-20 FALSE    FALSE     <NA>   0.021    -0.28 -0.15    -0.02
+#> 5                                         instSites 20-33 FALSE    FALSE     <NA>   0.011    -0.37 -0.21    -0.05
+#> 6                                                     age FALSE    FALSE    0.213   0.213    -0.00  0.00     0.01
+#> 7                                                     sex FALSE    FALSE   <0.001    <NA>     <NA>  <NA>     <NA>
+#> 8                                               sexFemale  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 9                                                 sexMale FALSE    FALSE     <NA>  <0.001     0.25  0.47     0.69
+#> 10                                                ph.ecog FALSE    FALSE    0.003    <NA>     <NA>  <NA>     <NA>
+#> 11                                    ph.ecogAsymptomatic  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 12           ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>  <0.001     0.20  0.42     0.63
+#> 13                       ph.ecogNot completely ambulatory FALSE    FALSE     <NA>  <0.001     0.20  0.47     0.73
+#> 14                                                wt.loss FALSE    FALSE    0.337   0.283    -0.01 -0.00     0.00
+#> 15                                            sex:ph.ecog FALSE    FALSE    0.010    <NA>     <NA>  <NA>     <NA>
+#> 16                          sexFemale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>     0.00  0.00     0.00
+#> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory FALSE     TRUE     <NA>    <NA>     0.20  0.42     0.63
+#> 18             sexFemale:ph.ecogNot completely ambulatory FALSE     TRUE     <NA>    <NA>     0.20  0.47     0.73
+#> 19                            sexMale:ph.ecogAsymptomatic FALSE     TRUE     <NA>    <NA>     0.25  0.47     0.69
+#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory FALSE    FALSE     <NA>   0.002     0.24  0.45     0.66
+#> 21               sexMale:ph.ecogNot completely ambulatory FALSE    FALSE     <NA>   0.098     0.39  0.65     0.90
+#> 22                                            sex:wt.loss FALSE    FALSE    0.557    <NA>     <NA>  <NA>     <NA>
+#> 23                                      sexFemale:wt.loss FALSE     TRUE     <NA>    <NA>    -0.01 -0.00     0.00
+#> 24                                        sexMale:wt.loss FALSE    FALSE     <NA>   0.557     0.25  0.47     0.69
 ```
 
 `adjust_interaction_model()` returns a data frame with these columns:
@@ -162,19 +163,19 @@ adjust_interaction_model(
 - **p.value**
   - The p-value of the covariate. P-values are inherited from the
     model’s `summary()` method and not recalculated.
-- **log_ci.95lwr** or **exp_ci.95lwr**
+- **ci.95lwr** or **exp_ci.95lwr**
   - Lower 95% confidence interval of the coefficient. If
     `exponentiate = TRUE`, the column’s name is changed and the contents
     are exponentiated.
-- **log_coef** or **exp_coef**
+- **coef** or **exp_coef**
   - The coefficient. If `exponentiate = TRUE`, the column’s name is
     changed and the contents are exponentiated.
-- **log_ci.95upr** or **exp_ci.95upr**
+- **ci.95upr** or **exp_ci.95upr**
   - Upper 95% confidence interval of the coefficient. If
     `exponentiate = TRUE`, the column’s name is changed and the contents
     are exponentiated.
 
-# Calculations
+# Details re. the calculations performed
 
 ## Adjusted interaction coefficients
 
@@ -265,7 +266,7 @@ $$\text{Upper CI} = 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
 res <- adjust_interaction_model(my_model, cancer_modified, digits.n = Inf)
 
 res[which(res$covar == "sexMale:ph.ecogNot completely ambulatory"),
-    c("covar", "log_ci.95lwr", "log_coef", "log_ci.95upr")]
-#>                                       covar log_ci.95lwr  log_coef log_ci.95upr
-#> 17 sexMale:ph.ecogNot completely ambulatory    0.3919536 0.6473835    0.9028135
+    c("covar", "ci.95lwr", "coef", "ci.95upr")]
+#>                                       covar  ci.95lwr      coef  ci.95upr
+#> 17 sexMale:ph.ecogNot completely ambulatory 0.3919536 0.6473835 0.9028135
 ```

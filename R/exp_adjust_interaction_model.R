@@ -9,7 +9,7 @@
 #' @param add.global.p (Logical) If `TRUE`, calculates a global p-value for each covariate.
 #' @param digits.n (Numeric) Number of digits to round coefficients and confidence intervals to.
 #' @param digits.p (Numeric) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.
-#' @param global_args (Named list) Arguments to pass to [car::Anova()]. Ignored if `add.global.p = FALSE`.
+#' @param global_args (Named list) Arguments to pass to [car::Anova()], overriding its defaults. Ignored if `add.global.p = FALSE`.
 #'
 #' @return A data frame with these columns:
 #'     \describe{
@@ -18,9 +18,9 @@
 #'       \item{**ref.intx**}{`TRUE` marks interactions that involve the reference level of a covariate.}
 #'       \item{**global.p**}{The global p-value of the covariate. Column is omitted if `add.global.p = FALSE`.}
 #'       \item{**p.value**}{The p-value of the covariate.}
-#'       \item{**log_ci.95lwr** or **exp_ci.95lwr**}{Lower 95% confidence interval of the coefficient. Exponentiated if `exponentiate = TRUE`.}
-#'       \item{**log_coef** or **exp_coef**}{The coefficient. Exponentiated if `exponentiate = TRUE`.}
-#'       \item{**log_ci.95upr** or **exp_ci.95upr**}{Upper 95% confidence interval of the coefficient. Exponentiated if `exponentiate = TRUE`.}
+#'       \item{**ci.95lwr** or **exp_ci.95lwr**}{Lower 95% confidence interval of the coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.}
+#'       \item{**coef** or **exp_coef**}{The coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.}
+#'       \item{**ci.95upr** or **exp_ci.95upr**}{Upper 95% confidence interval of the coefficient. If `exponentiate = TRUE`, the column's name is changed and the contents are exponentiated.}
 #'     }
 #'
 #' @export
@@ -137,8 +137,8 @@ adjust_interaction_model <- function(modelobj,
         final_ci_lwr <- named_to_df(round_n(exp(model_ci$lwr), digits = digits.n), "exp_ci.95lwr")
         final_ci_upr <- named_to_df(round_n(exp(model_ci$upr), digits = digits.n), "exp_ci.95upr")
     } else {
-        final_ci_lwr <- named_to_df(round_n(model_ci$lwr, digits = digits.n), "log_ci.95lwr")
-        final_ci_upr <- named_to_df(round_n(model_ci$upr, digits = digits.n), "log_ci.95upr")
+        final_ci_lwr <- named_to_df(round_n(model_ci$lwr, digits = digits.n), "ci.95lwr")
+        final_ci_upr <- named_to_df(round_n(model_ci$upr, digits = digits.n), "ci.95upr")
     }
 
 
@@ -148,7 +148,7 @@ adjust_interaction_model <- function(modelobj,
     if (exponentiate == TRUE) {
         final_coef <- named_to_df(round_n(exp(model_coef), digits = digits.n), "exp_coef")
     } else {
-        final_coef <- named_to_df(round_n(model_coef, digits = digits.n), "log_coef")
+        final_coef <- named_to_df(round_n(model_coef, digits = digits.n), "coef")
     }
 
 
