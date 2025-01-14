@@ -2,6 +2,7 @@
 - [About `coefixr`](#about-coefixr)
 - [Installation](#installation)
 - [Package contents](#package-contents)
+- [Package manual](#package-manual)
 - [Worked example](#worked-example)
 - [Details re. the calculations
   performed](#details-re-the-calculations-performed)
@@ -12,6 +13,7 @@
   - [Comparison to package output](#comparison-to-package-output)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- PDF manual is created in terminal with:  R CMD Rd2pdf . -o coefixr.pdf -->
 
 # About `coefixr`
 
@@ -41,6 +43,10 @@ It is not currently on CRAN, nor are there plans to release it there.
 |:---|:---|
 | `adjust_interaction_model()` | Takes a model and returns a dataframe of adjusted coefficients and confidence intervals. |
 | `cancer_modified` | A built-in dataset for testing. |
+
+# Package manual
+
+<https://github.com/DesiQuintans/coefixr/blob/main/coefixr.pdf>
 
 # Worked example
 
