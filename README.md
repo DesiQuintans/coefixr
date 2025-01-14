@@ -105,7 +105,8 @@ summary(my_model)$coefficients
 
 We can use `adjust_interaction_model()` to adjust the coefficients and
 confidence intervals of the interactions. For details of those
-adjustments, see the [Calculations section](#calculations).
+adjustments, see the [Calculations
+section](#details-re-the-calculations-performed).
 
 Here, I request non-exponentiated (i.e. log) coefficients, a global
 Type-II p-value for each variable, and output formatted to 2 decimal
@@ -117,6 +118,7 @@ adjust_interaction_model(
     data         = cancer_modified, 
     exponentiate = FALSE,
     add.global.p = TRUE,
+    intercept    = TRUE,
     digits.n     = 2, 
     digits.p     = 3,
     global_args  = list(type = "II")

@@ -7,3 +7,5 @@
   is a breaking change for old code**, hence a new major version number.
 - Add `is.top` and `is.intx` columns to the output of `adjust_interaction_model()`
   as conveniences for subsetting the dataframe. 
+- Add `intercept` arg to `adjust_interaction_model()` to keep/suppress reporting 
+  of the `(Intercept)` term.

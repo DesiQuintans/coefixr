@@ -7,6 +7,7 @@
 #' @param data (Dataframe) The data used to fit the model.
 #' @param exponentiate (Logical) If `TRUE`, exponentiates the coefficient and confidence interval.
 #' @param add.global.p (Logical) If `TRUE`, calculates a global p-value for each covariate.
+#' @param intercept (Logical) If `TRUE` (default), keep the `(Intercept)` term in the output table.
 #' @param digits.n (Numeric) Number of digits to round coefficients and confidence intervals to.
 #' @param digits.p (Numeric) Number of digits to round p-values to. Also handles very small ("<0.001") and large (">0.999") p-values.
 #' @param global_args (Named list) Arguments to pass to [car::Anova()], overriding its defaults. Ignored if `add.global.p = FALSE`.
@@ -47,6 +48,7 @@ adjust_interaction_model <- function(modelobj,
                                      data,
                                      exponentiate = FALSE,
                                      add.global.p = FALSE,
+                                     intercept    = TRUE,
                                      digits.n     = Inf,
                                      digits.p     = Inf,
                                      global_args  = NULL) {
@@ -180,6 +182,12 @@ adjust_interaction_model <- function(modelobj,
     rownames(result) <- NULL
 
 
-    # 7. Done!
+    # 7. If the intercept is not asked for, omit it.
+    if (intercept == FALSE) {
+        result <- result[result$covar != "(Intercept)", ]
+    }
+
+
+    # 8. Done!
     result
 }

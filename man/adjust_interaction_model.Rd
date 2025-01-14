@@ -9,6 +9,7 @@ adjust_interaction_model(
   data,
   exponentiate = FALSE,
   add.global.p = FALSE,
+  intercept = TRUE,
   digits.n = Inf,
   digits.p = Inf,
   global_args = NULL
@@ -22,6 +23,8 @@ adjust_interaction_model(
 \item{exponentiate}{(Logical) If \code{TRUE}, exponentiates the coefficient and confidence interval.}
 
 \item{add.global.p}{(Logical) If \code{TRUE}, calculates a global p-value for each covariate.}
+
+\item{intercept}{(Logical) If \code{TRUE} (default), keep the \code{(Intercept)} term in the output table.}
 
 \item{digits.n}{(Numeric) Number of digits to round coefficients and confidence intervals to.}
 
