@@ -76,7 +76,7 @@ adjust_interaction_se <- function(modelobj, interest = NULL) {
             which_cells,
 
             function(loc) {
-                sqrt(sum(covm[loc, loc], na.rm = TRUE))
+                sqrt(sum(covm[loc, loc], na.rm = TRUE))  # Remember that the off-diagonals (covariances) are already multiplied by 2, so summing them is fine.
             },
 
             double(1)
@@ -86,3 +86,18 @@ adjust_interaction_se <- function(modelobj, interest = NULL) {
     names(calculated_se) <- mdl_terms
     calculated_se
 }
+
+
+
+covm  <- stats::vcov(modelobj)
+covm[upper.tri(covm, diag = FALSE)] <- NA
+covm[loc, loc]
+sqrt(sum(covm[loc, loc], na.rm = TRUE))
+
+
+new_covm <- covm
+new_covm[upper.tri(new_covm, diag = FALSE)] <- NA
+new_covm[lower.tri(new_covm, diag = FALSE)] <- new_covm[lower.tri(new_covm, diag = FALSE)] * 2
+
+new_covm[loc, loc]
+sqrt(sum(new_covm[loc, loc], na.rm = TRUE))

@@ -13,6 +13,8 @@
   - [Comparison to package output](#comparison-to-package-output)
 - [Advanced usage](#advanced-usage)
   - [Variables of interest](#variables-of-interest)
+  - [Worked example of adjusting with
+    `interest = "sex"`](#worked-example-of-adjusting-with-interest--sex)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -346,7 +348,62 @@ expression `sex` and ignoring all others. Which is to say, it would use
 - `sexMale:ph.ecogNot completely ambulatory`
 
 And not use the fixed effect of `ph.ecogNot completely ambulatory`
-because it does not match.
+because it does not match. Here it is in action:
+
+## Worked example of adjusting with `interest = "sex"`
+
+``` r
+my_model <- 
+    lm(status ~ inst + age + sex * ph.ecog + sex * wt.loss, 
+       data = cancer_modified)
+
+adjust_interaction_model(
+    modelobj = my_model, 
+    data     = cancer_modified, 
+    interest = "sex"
+)
+```
+
+### Adjusted coefficients
+
+- `sexMale` ($0.471133734$)
+- (IGNORED) `ph.ecogNot completely ambulatory`
+- `sexMale:ph.ecogNot completely ambulatory` ($-0.289047417$)
+
+$$0.471133734 + -0.289047417 = 0.1820863$$
+
+### Adjusted SE
+
+- The variances
+  - `sexMale` ($0.01303826$)
+  - (IGNORED) `ph.ecogNot completely ambulatory`
+  - `sexMale:ph.ecogNot completely ambulatory` ($0.03024963$)
+- The covariances
+  - (IGNORED) `sexMale` vs `ph.ecogNot completely ambulatory`
+  - `sexMale` vs `sexMale:ph.ecogNot completely ambulatory`
+    ($-0.01191112$)
+  - (IGNORED) `ph.ecogNot completely ambulatory` vs
+    `sexMale:ph.ecogNot completely ambulatory`
+
+$$\sqrt{0.01303826 + 0.03024963 + 2(-0.01191112)} = 0.139519381$$
+
+### Adjusted CI
+
+$$\text{Lower CI} = 0.1820863 - 1.96 \times 0.139519381 = -0.09137169$$
+$$\text{Upper CI} = 0.1820863 + 1.96 \times 0.139519381 = 0.4555443$$
+
+### Comparison to package output
+
+``` r
+res <- adjust_interaction_model(my_model, cancer_modified, interest = "sex")
+
+res[which(res$covar == "sexMale:ph.ecogNot completely ambulatory"),
+    c("covar", "ci.95lwr", "coef", "ci.95upr")]
+#>                                       covar    ci.95lwr      coef  ci.95upr
+#> 17 sexMale:ph.ecogNot completely ambulatory -0.09137167 0.1820863 0.4555443
+```
+
+### Nota bene
 
 Because `interest` is a case-sensitive regular expression, you have a
 lot of flexibility about what you want to specify, like telling it that
