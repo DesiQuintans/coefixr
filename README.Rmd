@@ -19,26 +19,6 @@ knitr::opts_chunk$set(
 
 
 
-<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
-
-- [About `coefixr`](#about-coefixr)
-- [Installation](#installation)
-- [Package contents](#package-contents)
-- [Package manual](#package-manual)
-- [Worked example](#worked-example)
-      + [Automated calculation with `adjust_interaction_model()`](#automated-calculation-with-adjust_interaction_model)
-- [Details re. the calculations performed](#details-re-the-calculations-performed)
-   * [Adjusted interaction coefficients](#adjusted-interaction-coefficients)
-   * [Adjusted standard error (SE)](#adjusted-standard-error-se)
-   * [Adjusted 95% confidence interval](#adjusted-95-confidence-interval)
-   * [Comparison to package output](#comparison-to-package-output)
-- [Advanced usage](#advanced-usage)
-   * [Variables of interest](#variables-of-interest)
-
-<!-- TOC end -->
-
-
-
 # About `coefixr`
 
 <!-- badges: start -->
