@@ -7,13 +7,14 @@
 # 3) summing all those together and taking their square root.
 #
 # @param modelobj (Object) The model to adjust.
+# @param interest (Character) A regular expression that matches the term(s) you want to include in the adjustment. Any non-matching term is not used. If `NULL` (default), then all terms are included.
 #
 # @return A named Numeric vector, where the names are all of the terms from the
 #     model, and the values are the adjusted SEs.
 # @md
 # @keywords internal
 #
-adjust_interaction_se <- function(modelobj) {
+adjust_interaction_se <- function(modelobj, interest = NULL) {
     # 1. Get the names of the effects and the variance-covariance table.
     # On-diagonal cells are variances. Off-diagonal cells are covariances and
     # need to be multiplied by 2 for the SE calculation. The off-diagonal values
@@ -42,7 +43,24 @@ adjust_interaction_se <- function(modelobj) {
             MoreArgs = NULL
         )
 
-    # 3. Find out which cells of the vcov table will be used.
+
+    # 3. If a interest was specified, ignore all terms within interactions that
+    # don't have the interest term.
+    split_terms <-
+        mapply(
+            function(x) {
+                if (is.null(interest) | length(x) == 1) {
+                    return(x)
+                } else {
+                    return(x[grepl(interest, x)])
+                }
+            },
+
+            split_terms
+        )
+
+
+    # 4. Find out which cells of the vcov table will be used.
     which_cells <-
         Map(
             function(these_terms) {
@@ -52,7 +70,7 @@ adjust_interaction_se <- function(modelobj) {
             split_terms
         )
 
-    # 4. Grab the relevant cells from the vcov table and calculate the SE.
+    # 5. Grab the relevant cells from the vcov table and calculate the SE.
     calculated_se <-
         vapply(
             which_cells,
@@ -64,7 +82,7 @@ adjust_interaction_se <- function(modelobj) {
             double(1)
         )
 
-    # 5. Add names to it, and done!
+    # 6. Add names to it, and done!
     names(calculated_se) <- mdl_terms
     calculated_se
 }

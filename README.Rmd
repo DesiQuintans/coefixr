@@ -18,6 +18,27 @@ knitr::opts_chunk$set(
 ```
 
 
+
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [About `coefixr`](#about-coefixr)
+- [Installation](#installation)
+- [Package contents](#package-contents)
+- [Package manual](#package-manual)
+- [Worked example](#worked-example)
+      + [Automated calculation with `adjust_interaction_model()`](#automated-calculation-with-adjust_interaction_model)
+- [Details re. the calculations performed](#details-re-the-calculations-performed)
+   * [Adjusted interaction coefficients](#adjusted-interaction-coefficients)
+   * [Adjusted standard error (SE)](#adjusted-standard-error-se)
+   * [Adjusted 95% confidence interval](#adjusted-95-confidence-interval)
+   * [Comparison to package output](#comparison-to-package-output)
+- [Advanced usage](#advanced-usage)
+   * [Variables of interest](#variables-of-interest)
+
+<!-- TOC end -->
+
+
+
 # About `coefixr`
 
 <!-- badges: start -->
@@ -102,6 +123,8 @@ adjust_interaction_model(
 
 - **covar**
     - The covariate.
+- **adj.with**
+    - Terms included in the adjustment of interactions. `Unadjusted` for non-interactions. See [Advanced Usage](#variables-of-interest) for more details.
 - **is.top**
     - `TRUE` marks top-level covariates (i.e. names used in the model formula).
 - **is.intx**
@@ -170,8 +193,8 @@ $$\sqrt{0.01303826 + 0.01802702 + 0.03024963 + 2(0.007501756 + -0.01191112 + -0.
 
 The adjusted confidence interval is calculated by subtracting/adding $1.96 \times SE$ from the adjusted coefficient. Again, for the interaction of `sexMale:ph.ecogNot completely ambulatory` which has an adjusted coefficient of $0.6473835$ and an adjusted SE of $0.1303214$:
 
-$$\text{Lower CI} = 0.6473835 - 19.6 \times 0.1303214 = 0.3919536$$
-$$\text{Upper CI} = 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
+$$\text{Lower CI} = 0.6473835 - 1.96 \times 0.1303214 = 0.3919536$$
+$$\text{Upper CI} = 0.6473835 + 1.96 \times 0.1303214 = 0.9028134$$
 
 
 
@@ -184,3 +207,44 @@ res[which(res$covar == "sexMale:ph.ecogNot completely ambulatory"),
     c("covar", "ci.95lwr", "coef", "ci.95upr")]
 ```
 
+
+# Advanced usage
+
+## Variables of interest
+
+If you want the coefficients, SEs, and confidence intervals of your interactions to be adjusted only using some variable(s) of interest, you can specify this through the `interest` argument. 
+
+For example, adjustment of the interaction of `sexMale:ph.ecogNot completely ambulatory` in the worked example uses the coefficients/variances/covariances of these three terms:
+
+- `sexMale`
+- `ph.ecogNot completely ambulatory`
+- `sexMale:ph.ecogNot completely ambulatory`
+
+If you only want to look at the effect of sex in the interaction, then running:
+
+```{r eval=FALSE, include=TRUE}
+adjust_interaction_model(
+    modelobj = my_model, 
+    data     = cancer_modified, 
+    interest = "sex"
+)
+```
+
+would perform the adjustment using any term that matches the regular expression `sex` and ignoring all others. Which is to say, it would use 
+
+- `sexMale`
+- `sexMale:ph.ecogNot completely ambulatory`
+
+And not use the fixed effect of `ph.ecogNot completely ambulatory` because it does not match.
+
+Because `interest` is a case-sensitive regular expression, you have a lot of flexibility about what you want to specify, like telling it that you'd like to adjust by any term that first matches "ecog" and then later matches "ymp", which means that you would be adjusting with `ph.ecogAsymptomatic` or `ph.ecogSymptomatic but completely ambulatory`, but NOT `ph.ecogNot completely ambulatory`:
+
+```{r eval=FALSE, include=TRUE}
+adjust_interaction_model(
+    modelobj = my_model, 
+    data     = cancer_modified, 
+    interest = "ecog.*?ymp"
+)
+```
+
+It's left to the user to know what they are asking for and why.

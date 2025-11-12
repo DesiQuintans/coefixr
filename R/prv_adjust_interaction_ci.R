@@ -6,6 +6,7 @@
 #
 # @param modelobj (Object) A model object.
 # @param data (Dataframe) The data used to fit the model.
+# @param interest (Character) A regular expression that matches the term(s) you want to include in the adjustment. Any non-matching term is not used. If `NULL` (default), then all terms are included.
 #
 # @return A named List. `$lwr` and `$upr` contain named Numeric vectors that
 # are the lower and upper 95% confidence interval, respectively. The names in
@@ -13,10 +14,10 @@
 # @md
 # @keywords internal
 #
-adjust_interaction_ci <- function(modelobj, data) {
+adjust_interaction_ci <- function(modelobj, data, interest = NULL) {
     # 1. Get model's adjusted estimates and SEs.
-    model_se   <- adjust_interaction_se(modelobj)
-    model_coef <- adjust_interaction_coef(modelobj, data = data)
+    model_se   <- adjust_interaction_se(modelobj, interest = interest)
+    model_coef <- adjust_interaction_coef(modelobj, data = data, interest = interest)
     ref_levels <- build_missing_terms(modelobj, data = data)$reference_levels
 
     # SEs are only calculabled for terms in the original model, i.e. terms

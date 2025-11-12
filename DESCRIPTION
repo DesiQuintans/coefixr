@@ -1,6 +1,6 @@
 Package: coefixr
 Title: Adjusted Estimates For Interactions In Models
-Version: 0.0.7
+Version: 0.0.8
 Authors@R: 
     person("Desi", "Quintans", , "science@desiquintans.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-3356-0293"))
@@ -10,7 +10,7 @@ Description: This package adjusts the coefficients and confidence intervals asso
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: 
     R (>= 3.6.0)
 Imports:

@@ -5,6 +5,7 @@
 #'
 #' @param modelobj (Object) A model object.
 #' @param data (Dataframe) The data used to fit the model.
+#' @param interest (Character) A case-sensitive regular expression that matches the term(s) you want to include in the adjustment. Any non-matching term is not used. If `NULL` (default), then all terms are included.
 #' @param exponentiate (Logical) If `TRUE`, exponentiates the coefficient and confidence interval.
 #' @param add.global.p (Logical) If `TRUE`, calculates a global p-value for each covariate.
 #' @param intercept (Logical) If `TRUE` (default), keep the `(Intercept)` term in the output table.
@@ -15,6 +16,7 @@
 #' @return A data frame with these columns:
 #'     \describe{
 #'       \item{**covar**}{The covariate.}
+#'       \item{**adj.with**}{Terms included in the adjustment of interactions. `Unadjusted` for non-interactions.}
 #'       \item{**is.top**}{`TRUE` marks top-level covariates (i.e. names used in the model formula).}
 #'       \item{**is.intx**}{`TRUE` marks all interactions.}
 #'       \item{**ref**}{`TRUE` marks the reference levels of covariates.}
@@ -46,6 +48,7 @@
 #'
 adjust_interaction_model <- function(modelobj,
                                      data,
+                                     interest     = NULL,
                                      exponentiate = FALSE,
                                      add.global.p = FALSE,
                                      intercept    = TRUE,
@@ -58,10 +61,23 @@ adjust_interaction_model <- function(modelobj,
     final_covars <-
         data.frame(
             covar    = built_terms$complete_terms,
+            adj.with = NA,
             is.top   = built_terms$complete_terms %in% c("(Intercept)", built_terms$toplevel_all),
             is.intx  = grepl(":", built_terms$complete_terms),
             ref      = built_terms$complete_terms %in% built_terms$reference_levels,
             ref.intx = built_terms$complete_terms %in% built_terms$missing_terms
+        )
+
+    final_covars$adj.with <-
+        ifelse(
+            final_covars$is.intx == FALSE,
+            "Unadjusted",
+
+            ifelse(
+                is.null(interest),
+                "All terms",
+                sprintf("'%s'", interest)
+            )
         )
 
 
@@ -137,7 +153,7 @@ adjust_interaction_model <- function(modelobj,
 
 
     # 4. Get confidence intervals.
-    model_ci    <- adjust_interaction_ci(modelobj, data = data)
+    model_ci <- adjust_interaction_ci(modelobj, data = data, interest = interest)
 
     if (exponentiate == TRUE) {
         final_ci_lwr <- named_to_df(round_n(exp(model_ci$lwr), digits = digits.n), "exp_ci.95lwr")
@@ -149,7 +165,7 @@ adjust_interaction_model <- function(modelobj,
 
 
     # 5. Get coefficients.
-    model_coef  <- adjust_interaction_coef(modelobj, data = data)
+    model_coef  <- adjust_interaction_coef(modelobj, data = data, interest = interest)
 
     if (exponentiate == TRUE) {
         final_coef <- named_to_df(round_n(exp(model_coef), digits = digits.n), "exp_coef")

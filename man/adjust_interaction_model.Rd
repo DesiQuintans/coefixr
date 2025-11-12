@@ -7,6 +7,7 @@
 adjust_interaction_model(
   modelobj,
   data,
+  interest = NULL,
   exponentiate = FALSE,
   add.global.p = FALSE,
   intercept = TRUE,
@@ -19,6 +20,8 @@ adjust_interaction_model(
 \item{modelobj}{(Object) A model object.}
 
 \item{data}{(Dataframe) The data used to fit the model.}
+
+\item{interest}{(Character) A case-sensitive regular expression that matches the term(s) you want to include in the adjustment. Any non-matching term is not used. If \code{NULL} (default), then all terms are included.}
 
 \item{exponentiate}{(Logical) If \code{TRUE}, exponentiates the coefficient and confidence interval.}
 
@@ -36,6 +39,7 @@ adjust_interaction_model(
 A data frame with these columns:
 \describe{
 \item{\strong{covar}}{The covariate.}
+\item{\strong{adj.with}}{Terms included in the adjustment of interactions. \code{Unadjusted} for non-interactions.}
 \item{\strong{is.top}}{\code{TRUE} marks top-level covariates (i.e. names used in the model formula).}
 \item{\strong{is.intx}}{\code{TRUE} marks all interactions.}
 \item{\strong{ref}}{\code{TRUE} marks the reference levels of covariates.}

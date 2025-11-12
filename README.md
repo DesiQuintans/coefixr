@@ -11,13 +11,37 @@
   - [Adjusted standard error (SE)](#adjusted-standard-error-se)
   - [Adjusted 95% confidence interval](#adjusted-95-confidence-interval)
   - [Comparison to package output](#comparison-to-package-output)
+- [Advanced usage](#advanced-usage)
+  - [Variables of interest](#variables-of-interest)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- PDF manual is created in terminal with:  R CMD Rd2pdf . -o coefixr.pdf -->
+
+<!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
+
+- [About `coefixr`](#about-coefixr)
+- [Installation](#installation)
+- [Package contents](#package-contents)
+- [Package manual](#package-manual)
+- [Worked example](#worked-example) + [Automated calculation with
+  `adjust_interaction_model()`](#automated-calculation-with-adjust_interaction_model)
+- [Details re. the calculations
+  performed](#details-re-the-calculations-performed)
+  - [Adjusted interaction
+    coefficients](#adjusted-interaction-coefficients)
+  - [Adjusted standard error (SE)](#adjusted-standard-error-se)
+  - [Adjusted 95% confidence interval](#adjusted-95-confidence-interval)
+  - [Comparison to package output](#comparison-to-package-output)
+- [Advanced usage](#advanced-usage)
+  - [Variables of interest](#variables-of-interest)
+
+<!-- TOC end -->
 
 # About `coefixr`
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 `coefixr` adjusts the coefficients and confidence intervals associated
@@ -129,37 +153,41 @@ adjust_interaction_model(
     digits.p     = 3,
     global_args  = list(type = "II")
 )
-#>                                                     covar is.top is.intx   ref ref.intx global.p p.value ci.95lwr  coef ci.95upr
-#> 1                                             (Intercept)   TRUE   FALSE FALSE    FALSE     <NA>  <0.001     0.72  1.14     1.56
-#> 2                                                    inst   TRUE   FALSE FALSE    FALSE    0.014    <NA>     <NA>  <NA>     <NA>
-#> 3                                         instSites 01-10  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
-#> 4                                         instSites 11-20  FALSE   FALSE FALSE    FALSE     <NA>   0.021    -0.28 -0.15    -0.02
-#> 5                                         instSites 20-33  FALSE   FALSE FALSE    FALSE     <NA>   0.011    -0.37 -0.21    -0.05
-#> 6                                                     age   TRUE   FALSE FALSE    FALSE    0.213   0.213    -0.00  0.00     0.01
-#> 7                                                     sex   TRUE   FALSE FALSE    FALSE   <0.001    <NA>     <NA>  <NA>     <NA>
-#> 8                                               sexFemale  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
-#> 9                                                 sexMale  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.25  0.47     0.69
-#> 10                                                ph.ecog   TRUE   FALSE FALSE    FALSE    0.003    <NA>     <NA>  <NA>     <NA>
-#> 11                                    ph.ecogAsymptomatic  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
-#> 12           ph.ecogSymptomatic but completely ambulatory  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.20  0.42     0.63
-#> 13                       ph.ecogNot completely ambulatory  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.20  0.47     0.73
-#> 14                                                wt.loss   TRUE   FALSE FALSE    FALSE    0.337   0.283    -0.01 -0.00     0.00
-#> 15                                            sex:ph.ecog   TRUE    TRUE FALSE    FALSE    0.010    <NA>     <NA>  <NA>     <NA>
-#> 16                          sexFemale:ph.ecogAsymptomatic  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.00  0.00     0.00
-#> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.20  0.42     0.63
-#> 18             sexFemale:ph.ecogNot completely ambulatory  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.20  0.47     0.73
-#> 19                            sexMale:ph.ecogAsymptomatic  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.25  0.47     0.69
-#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory  FALSE    TRUE FALSE    FALSE     <NA>   0.002     0.24  0.45     0.66
-#> 21               sexMale:ph.ecogNot completely ambulatory  FALSE    TRUE FALSE    FALSE     <NA>   0.098     0.39  0.65     0.90
-#> 22                                            sex:wt.loss   TRUE    TRUE FALSE    FALSE    0.557    <NA>     <NA>  <NA>     <NA>
-#> 23                                      sexFemale:wt.loss  FALSE    TRUE FALSE     TRUE     <NA>    <NA>    -0.01 -0.00     0.00
-#> 24                                        sexMale:wt.loss  FALSE    TRUE FALSE    FALSE     <NA>   0.557     0.25  0.47     0.69
+#>                                                     covar   adj.with is.top is.intx   ref ref.intx global.p p.value ci.95lwr  coef ci.95upr
+#> 1                                             (Intercept) Unadjusted   TRUE   FALSE FALSE    FALSE     <NA>  <0.001     0.72  1.14     1.56
+#> 2                                                    inst Unadjusted   TRUE   FALSE FALSE    FALSE    0.014    <NA>     <NA>  <NA>     <NA>
+#> 3                                         instSites 01-10 Unadjusted  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 4                                         instSites 11-20 Unadjusted  FALSE   FALSE FALSE    FALSE     <NA>   0.021    -0.28 -0.15    -0.02
+#> 5                                         instSites 20-33 Unadjusted  FALSE   FALSE FALSE    FALSE     <NA>   0.011    -0.37 -0.21    -0.05
+#> 6                                                     age Unadjusted   TRUE   FALSE FALSE    FALSE    0.213   0.213    -0.00  0.00     0.01
+#> 7                                                     sex Unadjusted   TRUE   FALSE FALSE    FALSE   <0.001    <NA>     <NA>  <NA>     <NA>
+#> 8                                               sexFemale Unadjusted  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 9                                                 sexMale Unadjusted  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.25  0.47     0.69
+#> 10                                                ph.ecog Unadjusted   TRUE   FALSE FALSE    FALSE    0.003    <NA>     <NA>  <NA>     <NA>
+#> 11                                    ph.ecogAsymptomatic Unadjusted  FALSE   FALSE  TRUE    FALSE     <NA>    <NA>     0.00  0.00     0.00
+#> 12           ph.ecogSymptomatic but completely ambulatory Unadjusted  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.20  0.42     0.63
+#> 13                       ph.ecogNot completely ambulatory Unadjusted  FALSE   FALSE FALSE    FALSE     <NA>  <0.001     0.20  0.47     0.73
+#> 14                                                wt.loss Unadjusted   TRUE   FALSE FALSE    FALSE    0.337   0.283    -0.01 -0.00     0.00
+#> 15                                            sex:ph.ecog  All terms   TRUE    TRUE FALSE    FALSE    0.010    <NA>     <NA>  <NA>     <NA>
+#> 16                          sexFemale:ph.ecogAsymptomatic  All terms  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.00  0.00     0.00
+#> 17 sexFemale:ph.ecogSymptomatic but completely ambulatory  All terms  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.20  0.42     0.63
+#> 18             sexFemale:ph.ecogNot completely ambulatory  All terms  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.20  0.47     0.73
+#> 19                            sexMale:ph.ecogAsymptomatic  All terms  FALSE    TRUE FALSE     TRUE     <NA>    <NA>     0.25  0.47     0.69
+#> 20   sexMale:ph.ecogSymptomatic but completely ambulatory  All terms  FALSE    TRUE FALSE    FALSE     <NA>   0.002     0.24  0.45     0.66
+#> 21               sexMale:ph.ecogNot completely ambulatory  All terms  FALSE    TRUE FALSE    FALSE     <NA>   0.098     0.39  0.65     0.90
+#> 22                                            sex:wt.loss  All terms   TRUE    TRUE FALSE    FALSE    0.557    <NA>     <NA>  <NA>     <NA>
+#> 23                                      sexFemale:wt.loss  All terms  FALSE    TRUE FALSE     TRUE     <NA>    <NA>    -0.01 -0.00     0.00
+#> 24                                        sexMale:wt.loss  All terms  FALSE    TRUE FALSE    FALSE     <NA>   0.557     0.25  0.47     0.69
 ```
 
 `adjust_interaction_model()` returns a data frame with these columns:
 
 - **covar**
   - The covariate.
+- **adj.with**
+  - Terms included in the adjustment of interactions. `Unadjusted` for
+    non-interactions. See [Advanced Usage](#variables-of-interest) for
+    more details.
 - **is.top**
   - `TRUE` marks top-level covariates (i.e. names used in the model
     formula).
@@ -270,8 +298,8 @@ $1.96 \times SE$ from the adjusted coefficient. Again, for the
 interaction of `sexMale:ph.ecogNot completely ambulatory` which has an
 adjusted coefficient of $0.6473835$ and an adjusted SE of $0.1303214$:
 
-$$\text{Lower CI} = 0.6473835 - 19.6 \times 0.1303214 = 0.3919536$$
-$$\text{Upper CI} = 0.6473835 + 19.6 \times 0.1303214 = 0.9028134$$
+$$\text{Lower CI} = 0.6473835 - 1.96 \times 0.1303214 = 0.3919536$$
+$$\text{Upper CI} = 0.6473835 + 1.96 \times 0.1303214 = 0.9028134$$
 
 ## Comparison to package output
 
@@ -283,3 +311,56 @@ res[which(res$covar == "sexMale:ph.ecogNot completely ambulatory"),
 #>                                       covar  ci.95lwr      coef  ci.95upr
 #> 17 sexMale:ph.ecogNot completely ambulatory 0.3919536 0.6473835 0.9028135
 ```
+
+# Advanced usage
+
+## Variables of interest
+
+If you want the coefficients, SEs, and confidence intervals of your
+interactions to be adjusted only using some variable(s) of interest, you
+can specify this through the `interest` argument.
+
+For example, adjustment of the interaction of
+`sexMale:ph.ecogNot completely ambulatory` in the worked example uses
+the coefficients/variances/covariances of these three terms:
+
+- `sexMale`
+- `ph.ecogNot completely ambulatory`
+- `sexMale:ph.ecogNot completely ambulatory`
+
+If you only want to look at the effect of sex in the interaction, then
+running:
+
+``` r
+adjust_interaction_model(
+    modelobj = my_model, 
+    data     = cancer_modified, 
+    interest = "sex"
+)
+```
+
+would perform the adjustment using any term that matches the regular
+expression `sex` and ignoring all others. Which is to say, it would use
+
+- `sexMale`
+- `sexMale:ph.ecogNot completely ambulatory`
+
+And not use the fixed effect of `ph.ecogNot completely ambulatory`
+because it does not match.
+
+Because `interest` is a case-sensitive regular expression, you have a
+lot of flexibility about what you want to specify, like telling it that
+you’d like to adjust by any term that first matches “ecog” and then
+later matches “ymp”, which means that you would be adjusting with
+`ph.ecogAsymptomatic` or `ph.ecogSymptomatic but completely ambulatory`,
+but NOT `ph.ecogNot completely ambulatory`:
+
+``` r
+adjust_interaction_model(
+    modelobj = my_model, 
+    data     = cancer_modified, 
+    interest = "ecog.*?ymp"
+)
+```
+
+It’s left to the user to know what they are asking for and why.
