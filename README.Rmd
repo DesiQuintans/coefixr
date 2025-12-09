@@ -217,6 +217,7 @@ would perform the adjustment using any term that matches the regular expression 
 
 And not use the fixed effect of `ph.ecogNot completely ambulatory` because it does not match. Here it is in action:
 
+
 ## Worked example of adjusting with `interest = "sex"`
 
 ```{r eval=FALSE, include=TRUE}
