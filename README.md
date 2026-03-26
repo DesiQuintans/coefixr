@@ -39,6 +39,7 @@ You can install the development version of `coefixr` from
 ``` r
 # install.packages("pak")
 pak::pak("DesiQuintans/coefixr")
+library(coefixr)
 ```
 
 It is not currently on CRAN, nor are there plans to release it there.
