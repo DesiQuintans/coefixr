@@ -39,7 +39,6 @@ You can install the development version of `coefixr` from
 ``` r
 # install.packages("pak")
 pak::pak("DesiQuintans/coefixr")
-library(coefixr)
 ```
 
 It is not currently on CRAN, nor are there plans to release it there.
@@ -311,8 +310,8 @@ the coefficients/variances/covariances of these three terms:
 - `ph.ecogNot completely ambulatory`
 - `sexMale:ph.ecogNot completely ambulatory`
 
-If you only want to look at the effect of sex in the interaction, then
-running:
+If you only want to look at the effect of `sex` within each level of
+`ph.ecog`, then running:
 
 ``` r
 adjust_interaction_model(
@@ -334,8 +333,10 @@ because it does not match. Here it is in action:
 ## Worked example of adjusting with `interest = "sex"`
 
 ``` r
+# Hint: Put your covariate of interest last in the interaction 
+# to make the resulting dataframe's rows sort nicely.
 my_model <- 
-    lm(status ~ inst + age + sex * ph.ecog + sex * wt.loss, 
+    lm(status ~ inst + age + ph.ecog * sex, 
        data = cancer_modified)
 
 adjust_interaction_model(

@@ -1,4 +1,14 @@
-# coefixr 1.0.0
+# coefixr 0.0.9
+- Fixed
+    - `interest` is used to calculate CIs.
+
+
+# coefixr 0.0.8
+
+- Added
+    - `interest` argument.
+
+# coefixr 0.0.7
 
 - NEWS tracking starts.
 - Change column names for unexponentiated coefficients and CIs from "log_coef",

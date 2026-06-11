@@ -37,6 +37,36 @@
 #                       "Not completely ambulatory",
 #                       "Not completely ambulatory"))
 #
+# cancer_modified$died <-
+#     factor(
+#         cancer_modified$status,
+#         levels = 1:2,
+#         labels = c("Censored", "Died")
+#     )
 #
-# # save(cancer_modified, file = "data/cancer_modified.rda")
+# cancer_modified$age.tertile =
+#     cut(
+#         x = cancer_modified$age,
+#         breaks = c(min(cancer_modified$age, na.rm = TRUE),
+#                    quantile(cancer_modified$age, probs = c(1/3, 2/3), na.rm = TRUE),
+#                    max(cancer_modified$age, na.rm = TRUE)),
+#         include.lowest = TRUE
+#     )
+#
+# cancer_modified$wt.loss.binary =
+#     cut(
+#         x = cancer_modified$wt.loss,
+#         breaks = c(min(cancer_modified$wt.loss, na.rm = TRUE),
+#                    quantile(cancer_modified$wt.loss, probs = c(1/2), na.rm = TRUE),
+#                    max(cancer_modified$wt.loss, na.rm = TRUE)),
+#         include.lowest = TRUE
+#     )
+#
+# cancer_modified$wt.loss.binary =
+#     factor(
+#         cancer_modified$wt.loss.binary,
+#         labels = c("Less", "More")
+#     )
+#
+# save(cancer_modified, file = "data/cancer_modified.rda")
 # usethis::use_data(cancer_modified, overwrite = TRUE)

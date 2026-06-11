@@ -200,7 +200,7 @@ For example, adjustment of the interaction of `sexMale:ph.ecogNot completely amb
 - `ph.ecogNot completely ambulatory`
 - `sexMale:ph.ecogNot completely ambulatory`
 
-If you only want to look at the effect of sex in the interaction, then running:
+If you only want to look at the effect of `sex` within each level of `ph.ecog`, then running:
 
 ```{r eval=FALSE, include=TRUE}
 adjust_interaction_model(
@@ -221,8 +221,10 @@ And not use the fixed effect of `ph.ecogNot completely ambulatory` because it do
 ## Worked example of adjusting with `interest = "sex"`
 
 ```{r eval=FALSE, include=TRUE}
+# Hint: Put your covariate of interest last in the interaction 
+# to make the resulting dataframe's rows sort nicely.
 my_model <- 
-    lm(status ~ inst + age + sex * ph.ecog + sex * wt.loss, 
+    lm(status ~ inst + age + ph.ecog * sex, 
        data = cancer_modified)
 
 adjust_interaction_model(

@@ -15,10 +15,22 @@
 # @md
 # @keywords internal
 #
-adjust_interaction_coef <- function(modelobj, data, interest = NULL) {
+adjust_interaction_coef <- function(modelobj = NULL, data, interest = NULL, coefs = NULL) {
+    if (is.null(modelobj)) {
+        stopifnot(
+            "If `modelobj` is missing, then `coefs` must be supplied." =
+                !is.null(coefs)
+        )
+    }
+
     # 1. Get the names of the effects and the estimates of each.
-    mdl_terms <- names(stats::coef(modelobj))
-    mdl_coefs <- stats::coef(modelobj)
+    if (is.null(modelobj)) {
+        mdl_terms <- names(coefs)
+        mdl_coefs <- coefs
+    } else {
+        mdl_terms <- names(stats::coef(modelobj))
+        mdl_coefs <- stats::coef(modelobj)
+    }
 
 
     # 2. Get an exploded list of the interaction terms in the model, including
